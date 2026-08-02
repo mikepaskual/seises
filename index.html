@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	
+    <title>Seises</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    
+    <header class="titulo">
+		<div class="titulo-texto">
+			🃏 SEISES 🃏
+		</div>
+		<button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#howToPlayModal">📖 Cómo jugar</button>
+	</header>
+    
+    <div class="container">
+        <div class="panel-control">
+			<div class="scoreboard">
+				🏆 <span id="victories-counter">0</span>
+				<span class="score-separator">|</span>
+				💀 <span id="defeats-counter">0</span>
+			</div>
+			<button id="new-game" class="btn btn-primary">Nuevo Juego</button>
+			<div id="next-turn-container"></div>
+			<div id="select-aux"></div>
+        </div>
+    </div>
+
+    <div class="panel-jugador">
+        <h2>🧑 Jugador <small id="player-cards-counter"></small></h2>
+        <div id="player-cards-container"></div>
+    </div>
+
+    <div class="panel-jugador">
+        <h2>🤖 IA <small id="computer-cards-counter"></small></h2>
+        <div id="computer-cards-container"></div>
+    </div>
+
+	<div class="panel-mesa">
+		<h2 class="mesa-titulo">🃏 Mesa de juego</h2>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="mesa-palo h-100">
+					<h4>Oros</h4>
+					<div id="oros-cards-container"></div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="mesa-palo h-100">
+					<h4>Bastos</h4>
+					<div id="bastos-cards-container"></div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="mesa-palo h-100">
+					<h4>Copas</h4>
+					<div id="copas-cards-container"></div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="mesa-palo h-100">
+					<h4>Espadas</h4>
+					<div id="espadas-cards-container"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="howToPlayModal" tabindex="-1" role="dialog" aria-labelledby="howToPlayTitle" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="howToPlayTitle">
+						🃏 Cómo jugar
+					</h5>
+					<button type="button" class="close" data-dismiss="modal">
+						<span>&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<p>
+						<strong>Objetivo</strong>
+					</p>
+					<p>
+						Sé el primer jugador en jugar todas tus cartas.
+					</p>
+					<hr>
+					<p>
+						<strong>Reglas del juego</strong>
+					</p>
+					<ul>
+						<li>Cualquier <strong>Seis</strong> inicia un palo.</li>
+						<li>Solo se puede jugar la carta inmediatamente superior o inferior del mismo palo.</li>
+						<li>La baraja española sigue este orden:</li>
+					</ul>
+					<div class="text-center mb-3">
+						<div class="sequence">
+							<span>1</span>
+							<span>2</span>
+							<span>3</span>
+							<span>4</span>
+							<span>5</span>
+							<span>6</span>
+							<span>7</span>
+							<span class="sequence-gap">10</span>
+							<span>11</span>
+							<span>12</span>
+						</div>
+					</div>
+					<ul>
+						<li>Después del <strong>7</strong>, la siguiente carta es el <strong>10</strong>.</li>
+						<li>Si no puedes jugar, se salta tu turno.</li>
+						<li>El primer jugador sin cartas restantes gana.</li>
+					</ul>
+				</div>
+
+				<div class="modal-footer">
+					<button class="btn btn-primary" data-dismiss="modal">
+						¡Entiendo!
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+<footer class="footer">
+    <div class="footer-title">
+        🃏 SEISES
+    </div>
+	<div class="footer-version">
+		Version 1.0
+	</div>
+    <div class="footer-author">
+        Developed by <a href="https://github.com/mikepaskual" target="_blank" rel="noopener noreferrer">Miguel A. Pascual</a>
+    </div>
+</footer>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="assets/js/underscore-min.js"></script>
+    <script src="assets/js/juego.js"></script>
+</body>
+</html>

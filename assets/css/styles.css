@@ -1,0 +1,247 @@
+html, body {
+    margin: 0px;
+    background-color: #35654d;
+    color: white;
+}
+
+.titulo {
+    position: relative;
+    background: #18361A;
+    color: #F8F8F8;
+    padding: 18px 30px;
+    border-bottom: 2px solid rgba(212,175,55,.7);
+    box-shadow: 0 3px 10px rgba(0,0,0,.45);
+}
+
+.titulo-texto {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.titulo button {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.carta {
+    position: relative;
+    width: 100px;
+    left: 100px;
+    margin-left: -55px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .35);
+    border-radius: 6px;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+#player-cards-container .carta:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 18px rgba(0,0,0,.45);
+}
+
+#player-cards-container .carta {
+    cursor: pointer;
+}
+
+.panel-jugador {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 15px 20px;
+	max-width: 1200px;
+	width: 95%;
+	min-width: 700px;
+    margin: 20px auto;
+	margin-bottom: 25px;
+	padding: 20px 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+}
+
+.panel-jugador h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+.panel-jugador small{
+    opacity:.75;
+    font-size:.9rem;
+}
+
+#computadora-cartas, #jugador-cartas {
+    height: 240px;
+}
+
+.panel-mesa {
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+
+.mesa-titulo {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.mesa-palo {
+    background: rgba(255,255,255,.015);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 180px;
+}
+
+.mesa-palo h4 {
+    text-align: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.panel-control {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    padding:20px;
+    margin:25px auto;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:12px;
+}
+
+.btn{
+    border-radius:8px;
+    padding:8px 18px;
+    font-weight:600;
+}
+
+select{
+    background:#f7f7f7;
+    border-radius:8px;
+    padding:8px 12px;
+    min-width:220px;
+}
+
+#player-cards-container,
+#computer-cards-container{
+    min-height:150px;
+    display:flex;
+    align-items:center;
+}
+
+#oros-cards-container,
+#copas-cards-container,
+#bastos-cards-container,
+#espadas-cards-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.scoreboard {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #f8f8f8;
+}
+
+.score-separator {
+    opacity: .35;
+    margin: 0 4px;
+}
+
+.footer {
+    margin-top: 60px;
+    background: #18361A;
+    color: rgba(255,255,255,.75);
+    text-align: center;
+    padding: 22px 20px;
+    border-top: 2px solid rgba(212,175,55,.7);
+    box-shadow: 0 -3px 10px rgba(0,0,0,.35);
+}
+
+.footer a {
+    color: rgba(255,255,255,.90);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color .2s ease;
+}
+
+.footer a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.footer-title {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #F8F8F8;
+    margin-bottom: 12px;
+}
+
+.footer-version {
+    font-size: .85rem;
+    color: rgba(255,255,255,.60);
+    margin-bottom: 14px;
+}
+
+.footer-author {
+    font-size: .9rem;
+    color: rgba(255,255,255,.70);
+}
+
+.cards-warning {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.cards-danger {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.sequence {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.sequence span {
+    background: #198754;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.sequence-gap {
+    background: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.modal-content {
+    color: #212529;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    color: #212529;
+}
