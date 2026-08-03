@@ -38,15 +38,6 @@ html, body {
     transition: transform .15s ease, box-shadow .15s ease;
 }
 
-#player-cards-container .carta:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 18px rgba(0,0,0,.45);
-}
-
-#player-cards-container .carta {
-    cursor: pointer;
-}
-
 .panel-jugador {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -244,4 +235,25 @@ select{
 .modal-body,
 .modal-footer {
     color: #212529;
+}
+
+.playable-card {
+    cursor:pointer;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,.35),
+        0 0 6px rgba(255,255,255,.25);
+}
+
+.playable-card:hover {
+    transform: translateY(-8px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.45),
+        0 0 14px rgba(255,255,255,.55);
+}
+
+.locked-card {
+    filter: grayscale(70%) brightness(.8);
+    cursor: default;
 }

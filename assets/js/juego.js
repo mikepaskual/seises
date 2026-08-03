@@ -32,7 +32,6 @@ const computerScoreCounterElement = document.querySelector('#defeats-counter');
 
 const newGameButton        = document.querySelector('#new-game');
 const nextTurnContainer    = document.querySelector('#next-turn-container');
-const auxSelect            = document.querySelector('#select-aux');
 
 newGameButton.addEventListener('click', () => {
 	console.clear();
@@ -63,7 +62,6 @@ const setUp = () => {
 	espadasCardsContainer.innerHTML = '';
 	
 	nextTurnContainer.innerHTML = '';
-	auxSelect.innerHTML         = '';
 };
 
 const shuffle = () => {
@@ -109,42 +107,25 @@ const printNextTurnButton = () => {
 	}
 };
 
-const printAuxiliarSelect = () => {
-	auxSelect.innerHTML = '';
-	
-	const allowedPlayerCards = getAllowedPlayerCards();
-	
-	if (allowedPlayerCards.length !== 0) {
-		const playerCardsSelect = document.createElement('select');
-		playerCardsSelect.addEventListener('change', (event) => {
-			playPlayerCard(event.target.value);
-		});
-		
-		const playerCardOptionDefault  = document.createElement('option');
-		playerCardOptionDefault.text   = '-- Selecciona una carta --';
-		playerCardOptionDefault.value  = '';
-		playerCardsSelect.add(playerCardOptionDefault);
-		
-		for (let i = 0; i < allowedPlayerCards.length; i++) {
-			const allowedCard = allowedPlayerCards[i];
-			const playerCardOption  = document.createElement('option');
-			playerCardOption.text   = allowedCard.substring(0, allowedCard.length - 1) 
-					+ ' de ' + labels[allowedCard.substring(allowedCard.length - 1)];
-			playerCardOption.value  = allowedCard;
-			playerCardsSelect.add(playerCardOption);
-		}
-		
-		auxSelect.append(playerCardsSelect);
-	}
-};
-
 const printPlayerCards = () => {
 	playerCardsContainer.innerHTML = '';
+
+	const allowedPlayerCards = getAllowedPlayerCards();
 	
-	for (let i = 0; i < playerCards.length; i++) {
+	for (const playerCard of playerCards) {
 		const playerCardImg = document.createElement('img');
-		playerCardImg.src = `assets/images/cards/${ playerCards[i] }.png`;
+		playerCardImg.src = `assets/images/cards/${ playerCard }.png`;
 		playerCardImg.classList.add('carta');
+
+		if (allowedPlayerCards.includes(playerCard)) {
+			playerCardImg.classList.add('playable-card');
+			playerCardImg.addEventListener('click', () => {
+				playPlayerCard(playerCard);
+			});
+		} else {
+			playerCardImg.classList.add('locked-card');
+		}
+
 		playerCardsContainer.append(playerCardImg);
 	}
 };
@@ -260,7 +241,6 @@ const playPlayerCard = (card) => {
 		playerScore++;
 		playerScoreCounterElement.textContent = playerScore;
 		nextTurnContainer.innerHTML = '';
-		auxSelect.innerHTML         = '';
 
 		console.log('Ganaste! Fin de la partida :)');
 		alert('Ganaste! Fin de la partida :)');
@@ -287,7 +267,6 @@ const playPlayerCard = (card) => {
 				computerScore++;
 				computerScoreCounterElement.textContent = computerScore;
 				nextTurnContainer.innerHTML = '';
-				auxSelect.innerHTML         = '';
 
 				console.log('Perdiste. Fin de la partida :(');
 				alert('Perdiste. Fin de la partida :(');
@@ -317,7 +296,6 @@ const nextTurnPressed = (playerCards, computerCards) => {
 		computerScore++;
 		computerScoreCounterElement.textContent = computerScore;
 		nextTurnContainer.innerHTML = '';
-		auxSelect.innerHTML         = '';
 
 		console.log('Perdiste. Fin de la partida :(');
 		alert('Perdiste!');
@@ -360,7 +338,6 @@ const previousCardValue = value => {
 };
 
 const refreshGame = () => {
-	printAuxiliarSelect();
 	printNextTurnButton();
 	printPlayerCards();
 	printPlayerCardsCounter();
