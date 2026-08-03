@@ -37,6 +37,20 @@ const auxSelect            = document.querySelector('#select-aux');
 newGameButton.addEventListener('click', () => {
 	console.clear();
 	
+	setUp();
+	
+	console.log('Barajando las cartas...');
+	const deck = shuffle();
+	console.log('Cartas barajadas!');
+
+	console.log('Repartiendo las cartas entre los jugadores...');
+	deal(deck);
+	console.log('Cartas repartidas. Que comience la partida!');
+	
+	refreshGame();
+});
+
+const setUp = () => {
 	playerCards   = [];
     computerCards = [];
 	
@@ -50,21 +64,7 @@ newGameButton.addEventListener('click', () => {
 	
 	nextTurnContainer.innerHTML = '';
 	auxSelect.innerHTML         = '';
-	
-	console.log('Barajando las cartas...');
-	const deck = shuffle();
-	console.log('Cartas barajadas!');
-
-	console.log('Repartiendo las cartas entre los jugadores...');
-	deal(deck, playerCards, computerCards);
-	console.log('Cartas repartidas. Que comience la partida!');
-	
-	printPlayerCards(playerCards);
-	printComputerCards(computerCards);
-	
-	printAuxiliarSelect(playerCards, computerCards, magicNumber);
-	printNextTurnButton(playerCards, computerCards, magicNumber);
-});
+};
 
 const shuffle = () => {
 	let deck = [];
@@ -79,7 +79,7 @@ const shuffle = () => {
 	return _.shuffle(deck);
 };
 
-const deal = (deck, playerCards, computerCards) => {
+const deal = (deck) => {
 	for (let i = 0; i < deck.length; i++) {
 		if (i % 2 === 0) {
 			playerCards.push(deck[i]);
@@ -92,13 +92,12 @@ const deal = (deck, playerCards, computerCards) => {
 	orderCards(computerCards);
 };
 
-const printNextTurnButton = (playerCards, computerCards) => {
+const printNextTurnButton = () => {
 	nextTurnContainer.innerHTML = '';
 		
-	const cc = cardsOnTheTable(playerCards, computerCards);
-	const aa = allowedCards(playerCards, cc, magicNumber);
+	const allowedPlayerCards = getAllowedPlayerCards();
 	
-	if (aa.length === 0) {
+	if (allowedPlayerCards.length === 0) {
 		const nextTurnButton = document.createElement('button');
 		nextTurnButton.textContent = 'Paso';
 		nextTurnButton.classList.add('btn', 'btn-warning');
@@ -110,16 +109,15 @@ const printNextTurnButton = (playerCards, computerCards) => {
 	}
 };
 
-const printAuxiliarSelect = (playerCards, computerCards, magicNumber) => {
+const printAuxiliarSelect = () => {
 	auxSelect.innerHTML = '';
 	
-	const cc = cardsOnTheTable(playerCards, computerCards);
-	const aa = allowedCards(playerCards, cc, magicNumber);
+	const allowedPlayerCards = getAllowedPlayerCards();
 	
-	if (aa.length !== 0) {
+	if (allowedPlayerCards.length !== 0) {
 		const playerCardsSelect = document.createElement('select');
 		playerCardsSelect.addEventListener('change', (event) => {
-			putCardOnTheTable(event, playerCards, computerCards, magicNumber);
+			playPlayerCard(event.target.value);
 		});
 		
 		const playerCardOptionDefault  = document.createElement('option');
@@ -127,8 +125,8 @@ const printAuxiliarSelect = (playerCards, computerCards, magicNumber) => {
 		playerCardOptionDefault.value  = '';
 		playerCardsSelect.add(playerCardOptionDefault);
 		
-		for (let i = 0; i < aa.length; i++) {
-			const allowedCard = aa[i];
+		for (let i = 0; i < allowedPlayerCards.length; i++) {
+			const allowedCard = allowedPlayerCards[i];
 			const playerCardOption  = document.createElement('option');
 			playerCardOption.text   = allowedCard.substring(0, allowedCard.length - 1) 
 					+ ' de ' + labels[allowedCard.substring(allowedCard.length - 1)];
@@ -140,7 +138,7 @@ const printAuxiliarSelect = (playerCards, computerCards, magicNumber) => {
 	}
 };
 
-const printPlayerCards = (playerCards) => {
+const printPlayerCards = () => {
 	playerCardsContainer.innerHTML = '';
 	
 	for (let i = 0; i < playerCards.length; i++) {
@@ -149,7 +147,9 @@ const printPlayerCards = (playerCards) => {
 		playerCardImg.classList.add('carta');
 		playerCardsContainer.append(playerCardImg);
 	}
-	
+};
+
+const printPlayerCardsCounter = () => {
 	playerCardsCounterElement.textContent = `${playerCards.length} ${playerCards.length === 1 ? 'carta' : 'cartas'}`;
 
 	playerCardsCounterElement.classList.remove('cards-warning', 'cards-danger');
@@ -163,7 +163,7 @@ const printPlayerCards = (playerCards) => {
 	}
 };
 
-const printComputerCards = (computerCards) => {
+const printComputerCards = () => {
 	computerCardsContainer.innerHTML = '';
 	
 	for (let i = 0; i < computerCards.length; i++) {
@@ -172,7 +172,9 @@ const printComputerCards = (computerCards) => {
 		computerCardImg.classList.add('carta');
 		computerCardsContainer.append(computerCardImg);
 	}
-	
+};
+
+const printComputerCardsCounter = () => {
 	computerCardsCounterElement.textContent = `${computerCards.length} ${computerCards.length === 1 ? 'carta' : 'cartas'}`;
 
 	computerCardsCounterElement.classList.remove('cards-warning', 'cards-danger');
@@ -186,7 +188,7 @@ const printComputerCards = (computerCards) => {
 	}
 };
 
-const printCardsOnTheTable = (playerCards, computerCards) => {
+const printCardsOnTheTable = () => {
 	orosCardsContainer.innerHTML    = '';
 	copasCardsContainer.innerHTML   = '';
 	bastosCardsContainer.innerHTML  = '';
@@ -225,8 +227,8 @@ const printCardsOnTheTable = (playerCards, computerCards) => {
 	}
 };
 
-const orderCards = (cards) => {
-	cards.sort((a, b) => {
+const orderCards = (cardsToOrder) => {
+	return cardsToOrder.sort((a, b) => {
 		const letraA = a.match(/[A-Z]$/)[0];
 		const letraB = b.match(/[A-Z]$/)[0];
 
@@ -239,13 +241,12 @@ const orderCards = (cards) => {
 
 		return numeroA - numeroB;
 	});
-	return cards;
 };
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-function putCardOnTheTable(event, playerCards, computerCards, magicNumber) {
-	const cardSelected = event.target.value;
+const playPlayerCard = (card) => {
+	const cardSelected = card;
 	
 	const numero = cardSelected.substring(0, cardSelected.length - 1);
 	const desc   = labels[cardSelected.substring(cardSelected.length - 1)];
@@ -253,11 +254,7 @@ function putCardOnTheTable(event, playerCards, computerCards, magicNumber) {
 	
 	playerCards.splice(playerCards.indexOf(cardSelected), 1);
 	
-	printAuxiliarSelect(playerCards, computerCards, magicNumber);
-	printNextTurnButton(playerCards, computerCards, magicNumber);
-	printPlayerCards(playerCards);
-	printComputerCards(computerCards);
-	printCardsOnTheTable(playerCards, computerCards);
+	refreshGame();
 	
 	if (playerCards.length === 0) {
 		playerScore++;
@@ -268,22 +265,17 @@ function putCardOnTheTable(event, playerCards, computerCards, magicNumber) {
 		console.log('Ganaste! Fin de la partida :)');
 		alert('Ganaste! Fin de la partida :)');
 	} else {
-		const cc = cardsOnTheTable(playerCards, computerCards);
-		const aa = allowedCards(computerCards, cc, magicNumber);
+		const allowedComputerCards = getAllowedComputerCards();
 		
-		if (aa.length === 0) {
+		if (allowedComputerCards.length === 0) {
 			console.log('La IA pasa turno');
 			alert('La IA pasa turno');
 		} else {
-			const aleatoryIndex = randomInt(1, aa.length) - 1;
+			const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
 			
-			const cardOfComputerDeleted = computerCards.splice(computerCards.indexOf(aa[aleatoryIndex]), 1)[0];
+			const cardOfComputerDeleted = computerCards.splice(computerCards.indexOf(allowedComputerCards[aleatoryIndex]), 1)[0];
 			
-			printAuxiliarSelect(playerCards, computerCards, magicNumber);
-			printNextTurnButton(playerCards, computerCards, magicNumber);
-			printPlayerCards(playerCards);
-			printComputerCards(computerCards);
-			printCardsOnTheTable(playerCards, computerCards);
+			refreshGame();
 			
 			const numero2 = cardOfComputerDeleted.substring(0, cardOfComputerDeleted.length - 1);
 			const desc2   = labels[cardOfComputerDeleted.substring(cardOfComputerDeleted.length - 1)];
@@ -302,23 +294,18 @@ function putCardOnTheTable(event, playerCards, computerCards, magicNumber) {
 			}
 		}
 	}
-}
+};
 
 const nextTurnPressed = (playerCards, computerCards) => {
 	console.log('Pasas turno');
 	
-	const cc = cardsOnTheTable(playerCards, computerCards);
-	const aa = allowedCards(computerCards, cc, magicNumber);
+	const allowedComputerCards = getAllowedComputerCards();
 	
-	const aleatoryIndex = randomInt(1, aa.length) - 1;
+	const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
 	
-	const cardOfComputerDeleted = computerCards.splice(computerCards.indexOf(aa[aleatoryIndex]), 1)[0];
+	const cardOfComputerDeleted = computerCards.splice(computerCards.indexOf(allowedComputerCards[aleatoryIndex]), 1)[0];
 		
-	printAuxiliarSelect(playerCards, computerCards, magicNumber);
-	printNextTurnButton(playerCards, computerCards, magicNumber);
-	printPlayerCards(playerCards);
-	printComputerCards(computerCards);
-	printCardsOnTheTable(playerCards, computerCards);
+	refreshGame();
 	
 	const numero = cardOfComputerDeleted.substring(0, cardOfComputerDeleted.length - 1);
 	const desc   = labels[cardOfComputerDeleted.substring(cardOfComputerDeleted.length - 1)];
@@ -337,7 +324,7 @@ const nextTurnPressed = (playerCards, computerCards) => {
 	}
 };
 
-const cardsOnTheTable = (playerCards, computerCards) => {
+const cardsOnTheTable = () => {
 	let cardsOnTheTable = [];
 	
 	for (let i = lowerValue; i <= highestValue; i++) {
@@ -345,8 +332,9 @@ const cardsOnTheTable = (playerCards, computerCards) => {
 			continue;
 		}
         for (const type of types) {
-			if (!playerCards.includes(i + type) && !computerCards.includes(i + type)) {
-				cardsOnTheTable.push(i + type);
+			const card = i + type;
+			if (!playerCards.includes(card) && !computerCards.includes(card)) {
+				cardsOnTheTable.push(card);
 			}
         }
     }
@@ -371,7 +359,25 @@ const previousCardValue = value => {
 	return previous;
 };
 
-const allowedCards = (cards, cardsOnTheTable, magicNumber) => {
+const refreshGame = () => {
+	printAuxiliarSelect();
+	printNextTurnButton();
+	printPlayerCards();
+	printPlayerCardsCounter();
+	printComputerCards();
+	printComputerCardsCounter();
+	printCardsOnTheTable();
+};
+
+const getAllowedPlayerCards = () => {
+	return allowedCards(playerCards, cardsOnTheTable());
+};
+
+const getAllowedComputerCards = () => {
+	return allowedCards(computerCards, cardsOnTheTable());
+};
+
+const allowedCards = (cards, cardsOnTheTable) => {
 	const allowedCards = cards.filter(card => card.startsWith(String(magicNumber)));
 	
 	for(const type of types) {
