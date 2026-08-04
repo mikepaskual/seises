@@ -40,7 +40,7 @@ A modern browser implementation of the traditional Spanish card game <strong>Sei
 
 ### Selector Language
 
-![Selector Language](assets/images/screenshots/gameplay1.png)
+![Selector Language](assets/images/screenshots/gameplay4.png)
 
 ### Clickable Cards
 
