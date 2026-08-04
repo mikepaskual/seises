@@ -1,21 +1,23 @@
+const DEFAULT_LANGUAGE = "es";
+
 const magicNumber    = 6;
 const lowerValue     = 1;
 const highestValue   = 12;
 const excludedValues = [8, 9];
 const types          = ['B', 'C', 'E', 'O'];
-const labels         = { 
-	'B': 'BASTOS', 
-	'C': 'COPAS', 
-	'E': 'ESPADAS', 
-	'O': 'OROS' 
+const SUITS = {
+    B: "bastos",
+    C: "copas",
+    E: "espadas",
+    O: "oros"
 };
 const STATUS_ICONS = {
-    info: "ℹ️",
-    player: "🧑",
+    info:     "ℹ️",
+    player:   "🧑",
     computer: "🤖",
-    warning: "⚠️",
-    success: "🎉",
-    error: "💀"
+    warning:  "⚠️",
+    success:  "🎉",
+    error:    "💀"
 };
 
 let gameOver      = false;
@@ -39,25 +41,20 @@ const espadasCardsContainer = document.querySelector('#espadas-cards-container')
 const playerScoreCounterElement   = document.querySelector('#victories-counter');
 const computerScoreCounterElement = document.querySelector('#defeats-counter');
 
-const newGameButton        = document.querySelector('#new-game');
-const nextTurnContainer    = document.querySelector('#next-turn-container');
+const newGameButton     = document.querySelector('#new-game');
+const nextTurnContainer = document.querySelector('#next-turn-container');
 
 const statusPanel   = document.querySelector("#status-panel");
 const statusIcon    = document.querySelector("#status-icon");
 const statusMessage = document.querySelector("#status-message");
 
+const languageSelector = document.querySelector("#language-selector");
+
 newGameButton.addEventListener('click', () => {
-	console.clear();
-	
 	setUp();
 	
-	console.log('Barajando las cartas...');
 	const deck = shuffle();
-	console.log('Cartas barajadas!');
-
-	console.log('Repartiendo las cartas entre los jugadores...');
 	deal(deck);
-	console.log('Cartas repartidas. Que comience la partida!');
 	
 	refreshGame();
 });
@@ -78,7 +75,7 @@ const setUp = () => {
 	
 	nextTurnContainer.innerHTML = '';
 
-	showStatus("info", "Comienza una nueva partida.");
+	showStatus("info", t("status.newGame"));
 };
 
 const shuffle = () => {
@@ -114,7 +111,7 @@ const renderNextTurnButton = () => {
 	
 	if (allowedPlayerCards.length === 0) {
 		const nextTurnButton = document.createElement('button');
-		nextTurnButton.textContent = 'Paso';
+		nextTurnButton.textContent = t("buttons.nextTurn");
 		nextTurnButton.classList.add('btn', 'btn-warning');
 		nextTurnButton.id = 'next-turn';
 		nextTurnButton.addEventListener('click', (event) => {
@@ -147,8 +144,12 @@ const renderPlayerCards = () => {
 	}
 };
 
+const pluralize = (count, singularKey, pluralKey) => {
+    return `${count} ${t(count === 1 ? singularKey : pluralKey)}`;
+};
+
 const renderPlayerCardsCounter = () => {
-	playerCardsCounterElement.textContent = `${playerCards.length} ${playerCards.length === 1 ? 'carta' : 'cartas'}`;
+	playerCardsCounterElement.textContent = pluralize(playerCards.length, "cards.singular", "cards.plural");
 
 	playerCardsCounterElement.classList.remove('cards-warning', 'cards-danger');
 
@@ -173,7 +174,7 @@ const renderComputerCards = () => {
 };
 
 const renderComputerCardsCounter = () => {
-	computerCardsCounterElement.textContent = `${computerCards.length} ${computerCards.length === 1 ? 'carta' : 'cartas'}`;
+	computerCardsCounterElement.textContent = pluralize(computerCards.length, "cards.singular", "cards.plural");
 
 	computerCardsCounterElement.classList.remove('cards-warning', 'cards-danger');
 
@@ -251,8 +252,7 @@ const playPlayerCard = (card) => {
 	const cardSelected = card;
 	
 	const numero = cardSelected.substring(0, cardSelected.length - 1);
-	const desc   = labels[cardSelected.substring(cardSelected.length - 1)];
-	console.log('Lanzas el ' + numero + ' de ' + desc);
+	const desc   = t(`suits.${SUITS[cardSelected.substring(cardSelected.length - 1)]}`);
 	
 	playerCards.splice(playerCards.indexOf(cardSelected), 1);
 	
@@ -263,15 +263,12 @@ const playPlayerCard = (card) => {
 		gameOver = true;
 		playerScoreCounterElement.textContent = playerScore;
 		nextTurnContainer.innerHTML = '';
-
-		console.log('¡Enhorabuena, has ganado!');
-		showStatus('success', '¡Enhorabuena, has ganado!');
+		showStatus('success', t("status.playerWins"));
 	} else {
 		const allowedComputerCards = getAllowedComputerCards();
 		
 		if (allowedComputerCards.length === 0) {
-			console.log('La IA pasa turno');
-			showStatus('warning', 'La IA pasa turno.');
+			showStatus('warning', t("status.computerPass"));
 		} else {
 			const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
 			
@@ -280,27 +277,25 @@ const playPlayerCard = (card) => {
 			refreshGame();
 			
 			const numero2 = cardOfComputerDeleted.substring(0, cardOfComputerDeleted.length - 1);
-			const desc2   = labels[cardOfComputerDeleted.substring(cardOfComputerDeleted.length - 1)];
+			const desc2   = t(`suits.${SUITS[cardOfComputerDeleted.substring(cardOfComputerDeleted.length - 1)]}`);
 
-			console.log('La IA lanza el ' + numero2 + ' de ' + desc2);
-			showStatus('computer', 'La IA lanza el ' + numero2 + ' de ' + desc2);
+			showStatus('computer', t("status.computerPlays", {
+				value: numero2,
+				suit: desc2
+			}));
 
 			if (computerCards.length === 0) {
 				computerScore++;
 				gameOver = true;
 				computerScoreCounterElement.textContent = computerScore;
 				nextTurnContainer.innerHTML = '';
-
-				console.log('Perdiste. Fin de la partida');
-				showStatus('error', 'Perdiste. Fin de la partida.');
+				showStatus('error', t("status.computerWins"));
 			}
 		}
 	}
 };
 
 const nextTurnPressed = (playerCards, computerCards) => {
-	console.log('Pasas turno');
-	
 	const allowedComputerCards = getAllowedComputerCards();
 	
 	const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
@@ -310,19 +305,20 @@ const nextTurnPressed = (playerCards, computerCards) => {
 	refreshGame();
 	
 	const numero = cardOfComputerDeleted.substring(0, cardOfComputerDeleted.length - 1);
-	const desc   = labels[cardOfComputerDeleted.substring(cardOfComputerDeleted.length - 1)];
+	const desc   = t(`suits.${SUITS[cardOfComputerDeleted.substring(cardOfComputerDeleted.length - 1)]}`);
 
-	console.log('La IA lanza el ' + numero + ' de ' + desc);
-	showStatus('computer', 'La IA lanza el ' + numero + ' de ' + desc);
-
+	showStatus('computer', t('status.computerPlays', {
+		value: numero,
+		suit: desc
+	}));
+	
 	if (computerCards.length === 0) {
 		computerScore++;
 		gameOver = true;
 		computerScoreCounterElement.textContent = computerScore;
 		nextTurnContainer.innerHTML = '';
 
-		console.log('Perdiste. Fin de la partida');
-		showStatus('error', 'Perdiste. Fin de la partida.');
+		showStatus('error', t("status.computerWins"));
 	}
 };
 
@@ -368,6 +364,16 @@ const refreshGame = () => {
 	renderComputerCards();
 	renderComputerCardsCounter();
 	renderCardsOnTheTable();
+};
+
+const renderTexts = () => {
+    document
+        .querySelectorAll("[data-i18n]")
+        .forEach(element => {
+            element.innerHTML = t(element.dataset.i18n);
+        });
+	renderPlayerCardsCounter();
+	renderComputerCardsCounter();
 };
 
 const getAllowedPlayerCards = () => {
@@ -421,3 +427,15 @@ const showStatus = (type, message) => {
     statusMessage.textContent = message;
 
 };
+
+languageSelector.addEventListener("change", event => {
+	const language = event.target.value;
+	setLanguage(language);
+	localStorage.setItem("language", language);
+	renderTexts();
+});
+
+const language = localStorage.getItem("language") ?? DEFAULT_LANGUAGE;
+setLanguage(language);
+languageSelector.value = language;
+renderTexts();

@@ -25,19 +25,30 @@ A modern browser implementation of the traditional Spanish card game <strong>Sei
 - Traditional Spanish **Seises** gameplay
 - Single-player mode against AI
 - Spanish 40-card deck
+- Clickable cards (no drop-down menus)
 - Interactive game board
+- Dynamic status panel
+- English and Spanish language support
+- Language selector with persistence
 - Victory and defeat counter
-- Responsive interface
-- Clean and modern user interface
+- Modern responsive interface
 - Built entirely with Vanilla JavaScript
 
 ---
 
 ## 📸 Screenshots
 
-### Gameplay
+### Selector Language
 
-![Gameplay](assets/images/screenshots/gameplay1.png)
+![Selector Language](assets/images/screenshots/gameplay1.png)
+
+### Clickable Cards
+
+![Clickable Cards](assets/images/screenshots/gameplay2.png)
+
+### Game Board
+
+![Game Board](assets/images/screenshots/gameplay3.png)
 
 ---
 
@@ -100,8 +111,7 @@ Open the project folder and launch:
 ```text
 index.html
 ```
-
-No installation or build process is required.
+The game runs entirely in the browser and requires no server-side components.
 
 ---
 
@@ -112,6 +122,7 @@ No installation or build process is required.
 - Vanilla JavaScript (ES6+)
 - Bootstrap 4.4.1
 - Underscore.js
+- LocalStorage API (language persistence)
 
 ---
 
@@ -121,10 +132,16 @@ No installation or build process is required.
 .
 ├── assets
 │   ├── css
-│   ├── js
-│   └── images
-│       ├── cards
-│       └── screenshots
+│   ├── images
+│   │   ├── cards
+│   │   └── screeshots
+│   ├── i18n
+│   │   ├── en.js
+│   │   └── es.js
+│   └── js
+│       ├── i18n.js
+│       ├── juego.js
+│       └── underscore-min.js
 │
 ├── .gitignore
 ├── index.html
@@ -136,26 +153,28 @@ No installation or build process is required.
 
 ## 🚧 Roadmap
 
-### Version 1.0
+### ✅ Version 1.0
 
-- ✅ Traditional gameplay
-- ✅ Single-player mode against AI
-- ✅ Spanish deck
-- ✅ Responsive interface
-- ✅ Victory / Defeat counter
+- Traditional gameplay
+- Single-player mode against AI
+- Spanish deck
+- Victory / Defeat counter
 
-### Planned Features
+### ✅ Version 2.0
 
-- 🎴 Mandatory opening with the Six of Oros
-- 🖱️ Play cards by clicking directly on them
-- 👥 Support for 2–5 players
-- 📝 Custom player names
-- 🤖 Multiple AI opponents
-- 🧠 AI difficulty levels
-- 💾 Local Storage support
-- 📊 Extended game statistics
-- 🎵 Sound effects
-- ✨ Card animations
+- Clickable cards
+- Modernized interface
+- Dynamic status panel
+- Internationalization (English / Spanish)
+
+### 🔜 Next milestones
+
+- Support for multiple players
+- Custom player names
+- Smarter AI
+- Local game persistence
+- Statistics and match history
+- Visual improvements and animations
 
 ---
 

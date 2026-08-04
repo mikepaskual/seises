@@ -6,26 +6,42 @@ html, body {
 
 .titulo {
     position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     background: #18361A;
     color: #F8F8F8;
+
     padding: 18px 30px;
+
     border-bottom: 2px solid rgba(212,175,55,.7);
     box-shadow: 0 3px 10px rgba(0,0,0,.45);
 }
 
-.titulo-texto {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    letter-spacing: 4px;
-    text-transform: uppercase;
+.header-left {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-.titulo button {
+.header-right {
     position: absolute;
     right: 30px;
     top: 50%;
     transform: translateY(-50%);
+}
+
+.titulo-texto {
+    text-align: center;
+
+    font-size: 2rem;
+    font-weight: bold;
+
+    letter-spacing: 4px;
+    text-transform: uppercase;
 }
 
 .carta {
@@ -42,27 +58,47 @@ html, body {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 12px;
-    padding: 15px 20px;
 	max-width: 1200px;
 	width: 95%;
 	min-width: 700px;
-    margin: 20px auto;
-	margin-bottom: 25px;
+    margin: 20px auto 25px;
 	padding: 20px 30px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
 }
 
-.panel-jugador h2 {
+.player-title {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    font-size: 1.4rem;
-    margin-bottom: 15px;
+    gap: .5rem;
 }
 
-.panel-jugador small{
-    opacity:.75;
-    font-size:.9rem;
+.panel-jugador h2 {
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+}
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+}
+
+.panel-title-icon {
+    font-size: 1.4rem;
+}
+
+.panel-jugador small {
+    position: absolute;
+    right: 0;
+
+    opacity: .75;
+    font-size: .9rem;
 }
 
 #computadora-cartas, #jugador-cartas {
@@ -73,11 +109,21 @@ html, body {
     background: rgba(255,255,255,.025);
     border: 1px solid rgba(255,255,255,.08);
     border-radius: 12px;
+
+    max-width: 1200px;
+    width: 95%;
+    min-width: 700px;
+
+    margin: 20px auto 25px;
+
+    padding: 20px 30px;
+
     box-shadow: 0 2px 8px rgba(0,0,0,.15);
 }
 
 .mesa-titulo {
     text-align: center;
+    margin-top: 20px;
     margin-bottom: 25px;
     font-size: 1.5rem;
     letter-spacing: 2px;
@@ -87,7 +133,7 @@ html, body {
     background: rgba(255,255,255,.015);
     border: 1px solid rgba(255,255,255,.06);
     border-radius: 10px;
-    padding: 15px;
+    padding: 20px;
     min-height: 180px;
 }
 
@@ -116,13 +162,6 @@ html, body {
     border-radius:8px;
     padding:8px 18px;
     font-weight:600;
-}
-
-select{
-    background:#f7f7f7;
-    border-radius:8px;
-    padding:8px 12px;
-    min-width:220px;
 }
 
 #player-cards-container,
@@ -284,4 +323,40 @@ select{
 
 #status-message {
     flex: 1;
+}
+
+.language-selector select {
+
+    min-width: 140px;
+
+    height: 40px;
+
+    padding: 0 .75rem;
+
+    background: transparent;
+
+    color: white;
+
+    border: 1px solid rgba(255,255,255,.45);
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.language-selector select option {
+    color: black;
+}
+
+#oros-cards-container .carta,
+#copas-cards-container .carta,
+#bastos-cards-container .carta,
+#espadas-cards-container .carta {
+    left: 40px;
+}
+
+.panel-mesa .row > div {
+    margin-bottom: 20px;
 }

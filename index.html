@@ -13,10 +13,24 @@
 <body>
     
     <header class="titulo">
+		<div class="header-left">
+			<div class="language-selector">
+				<select id="language-selector">
+					<option value="es">Español</option>
+					<option value="en">English</option>
+				</select>
+			</div>
+		</div>
+
 		<div class="titulo-texto">
 			🃏 SEISES 🃏
 		</div>
-		<button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#howToPlayModal">📖 Cómo jugar</button>
+
+		<div class="header-right">
+			<button class="btn btn-outline-light" data-toggle="modal" data-target="#howToPlayModal">
+				📖 <span data-i18n="buttons.howToPlay"></span>
+			</button>
+		</div>
 	</header>
     
     <div class="container">
@@ -26,7 +40,7 @@
 				<span class="score-separator">|</span>
 				💀 <span id="defeats-counter">0</span>
 			</div>
-			<button id="new-game" class="btn btn-primary">Nuevo Juego</button>
+			<button id="new-game" class="btn btn-primary" data-i18n="buttons.newGame"></button>
 			<div id="next-turn-container"></div>
         </div>
 
@@ -37,40 +51,56 @@
     </div>
 
     <div class="panel-jugador">
-        <h2>🧑 Jugador <small id="player-cards-counter"></small></h2>
+        <h2>
+			<span class="panel-title">
+				<span class="panel-title-icon">🧑</span>
+				<span data-i18n="headings.player"></span>
+			</span>
+
+			<small id="player-cards-counter"></small>
+		</h2>
         <div id="player-cards-container"></div>
     </div>
 
     <div class="panel-jugador">
-        <h2>🤖 IA <small id="computer-cards-counter"></small></h2>
+        <h2>
+			<span class="panel-title">
+				<span class="panel-title-icon">🤖</span>
+				<span data-i18n="headings.ia"></span> 
+			</span>
+			
+			<small id="computer-cards-counter"></small>
+		</h2>
         <div id="computer-cards-container"></div>
     </div>
 
 	<div class="panel-mesa">
-		<h2 class="mesa-titulo">🃏 Mesa de juego</h2>
+		<h2 class="mesa-titulo">
+			🃏 <span data-i18n="headings.table"></span>
+		</h2>
 
 		<div class="row">
 			<div class="col-md-6">
 				<div class="mesa-palo h-100">
-					<h4>Oros</h4>
+					<h4 data-i18n="suits.oros"></h4>
 					<div id="oros-cards-container"></div>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="mesa-palo h-100">
-					<h4>Bastos</h4>
+					<h4 data-i18n="suits.bastos"></h4>
 					<div id="bastos-cards-container"></div>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="mesa-palo h-100">
-					<h4>Copas</h4>
+					<h4 data-i18n="suits.copas"></h4>
 					<div id="copas-cards-container"></div>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="mesa-palo h-100">
-					<h4>Espadas</h4>
+					<h4 data-i18n="suits.espadas"></h4>
 					<div id="espadas-cards-container"></div>
 				</div>
 			</div>
@@ -82,7 +112,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="howToPlayTitle">
-						🃏 Cómo jugar
+						🃏 <span data-i18n="howToPlay.title"></span>
 					</h5>
 					<button type="button" class="close" data-dismiss="modal">
 						<span>&times;</span>
@@ -91,19 +121,17 @@
 
 				<div class="modal-body">
 					<p>
-						<strong>Objetivo</strong>
+						<strong data-i18n="howToPlay.objective.title"></strong>
 					</p>
-					<p>
-						Sé el primer jugador en jugar todas tus cartas.
-					</p>
+					<p data-i18n="howToPlay.objective.description"></p>
 					<hr>
 					<p>
-						<strong>Reglas del juego</strong>
+						<strong data-i18n="howToPlay.rules.title"></strong>
 					</p>
 					<ul>
-						<li>Cualquier <strong>Seis</strong> inicia un palo.</li>
-						<li>Solo se puede jugar la carta inmediatamente superior o inferior del mismo palo.</li>
-						<li>La baraja española sigue este orden:</li>
+						<li data-i18n="howToPlay.rules.items.0"></li>
+						<li data-i18n="howToPlay.rules.items.1"></li>
+						<li data-i18n="howToPlay.rules.items.2"></li>
 					</ul>
 					<div class="text-center mb-3">
 						<div class="sequence">
@@ -120,16 +148,14 @@
 						</div>
 					</div>
 					<ul>
-						<li>Después del <strong>7</strong>, la siguiente carta es el <strong>10</strong>.</li>
-						<li>Si no puedes jugar, se salta tu turno.</li>
-						<li>El primer jugador sin cartas restantes gana.</li>
+						<li data-i18n="howToPlay.rules.items.3"></li>
+						<li data-i18n="howToPlay.rules.items.4"></li>
+						<li data-i18n="howToPlay.rules.items.5"></li>
 					</ul>
 				</div>
 
 				<div class="modal-footer">
-					<button class="btn btn-primary" data-dismiss="modal">
-						¡Entiendo!
-					</button>
+					<button class="btn btn-primary" data-dismiss="modal" data-i18n="howToPlay.close"></button>
 				</div>
 			</div>
 		</div>
@@ -140,10 +166,11 @@
         🃏 SEISES
     </div>
 	<div class="footer-version">
-		Version 1.0
+		<span data-i18n="footer.version"></span> 2.0
 	</div>
     <div class="footer-author">
-        Developed by <a href="https://github.com/mikepaskual" target="_blank" rel="noopener noreferrer">Miguel A. Pascual</a>
+		<span data-i18n="footer.author"></span>
+		<a href="https://github.com/mikepaskual" target="_blank" rel="noopener noreferrer">Miguel A. Pascual</a>
     </div>
 </footer>
 
@@ -151,6 +178,9 @@
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="assets/js/underscore-min.js"></script>
+    <script src="assets/i18n/es.js"></script>
+    <script src="assets/i18n/en.js"></script>
+    <script src="assets/js/i18n.js"></script>
     <script src="assets/js/juego.js"></script>
 </body>
 </html>
