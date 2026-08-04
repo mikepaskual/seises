@@ -124,7 +124,7 @@ No installation or build process is required.
 │   ├── js
 │   └── images
 │       ├── cards
-│       ├── screenshots
+│       └── screenshots
 │
 ├── .gitignore
 ├── index.html
