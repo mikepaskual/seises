@@ -24,8 +24,16 @@ let gameOver      = false;
 let playerScore   = 0;
 let computerScore = 0;
 
-let playerCards   = [];
-let computerCards = [];
+const PLAYER   = 0;
+const COMPUTER = 1;
+
+let players = [
+	[], 
+	[]
+];
+
+const playerCards   = () => players[PLAYER];
+const computerCards = () => players[COMPUTER];
 
 const playerCardsCounterElement   = document.querySelector('#player-cards-counter');
 const computerCardsCounterElement = document.querySelector('#computer-cards-counter');
@@ -62,8 +70,10 @@ newGameButton.addEventListener('click', () => {
 const setUp = () => {
 	gameOver      = false;
 
-	playerCards   = [];
-    computerCards = [];
+	players = [
+		[], 
+		[]
+	];
 	
 	playerCardsContainer.innerHTML   = '';
 	computerCardsContainer.innerHTML = '';
@@ -94,14 +104,14 @@ const shuffle = () => {
 const deal = (deck) => {
 	for (let i = 0; i < deck.length; i++) {
 		if (i % 2 === 0) {
-			playerCards.push(deck[i]);
+			playerCards().push(deck[i]);
 		} else {
-			computerCards.push(deck[i]);
+			computerCards().push(deck[i]);
 		}
 	}
 
-	orderCards(playerCards);
-	orderCards(computerCards);
+	orderCards(playerCards());
+	orderCards(computerCards());
 };
 
 const renderNextTurnButton = () => {
@@ -115,7 +125,7 @@ const renderNextTurnButton = () => {
 		nextTurnButton.classList.add('btn', 'btn-warning');
 		nextTurnButton.id = 'next-turn';
 		nextTurnButton.addEventListener('click', (event) => {
-			nextTurnPressed(playerCards, computerCards);
+			nextTurnPressed();
 		});
 		nextTurnContainer.append(nextTurnButton);
 	}
@@ -126,7 +136,7 @@ const renderPlayerCards = () => {
 
 	const allowedPlayerCards = getAllowedPlayerCards();
 	
-	for (const playerCard of playerCards) {
+	for (const playerCard of playerCards()) {
 		const playerCardImg = document.createElement('img');
 		playerCardImg.src = `assets/images/cards/${ playerCard }.png`;
 		playerCardImg.classList.add('carta');
@@ -149,15 +159,15 @@ const pluralize = (count, singularKey, pluralKey) => {
 };
 
 const renderPlayerCardsCounter = () => {
-	playerCardsCounterElement.textContent = pluralize(playerCards.length, "cards.singular", "cards.plural");
+	playerCardsCounterElement.textContent = pluralize(playerCards().length, "cards.singular", "cards.plural");
 
 	playerCardsCounterElement.classList.remove('cards-warning', 'cards-danger');
 
-	if (playerCards.length <= 3 && playerCards.length > 1) {
+	if (playerCards().length <= 3 && playerCards().length > 1) {
 		playerCardsCounterElement.classList.add('cards-warning');
 	}
 
-	if (playerCards.length === 1) {
+	if (playerCards().length === 1) {
 		playerCardsCounterElement.classList.add('cards-danger');
 	}
 };
@@ -165,7 +175,7 @@ const renderPlayerCardsCounter = () => {
 const renderComputerCards = () => {
 	computerCardsContainer.innerHTML = '';
 	
-	for (let i = 0; i < computerCards.length; i++) {
+	for (let i = 0; i < computerCards().length; i++) {
 		const computerCardImg = document.createElement('img');
 		computerCardImg.src = `assets/images/cards/R.png`;
 		computerCardImg.classList.add('carta');
@@ -174,15 +184,15 @@ const renderComputerCards = () => {
 };
 
 const renderComputerCardsCounter = () => {
-	computerCardsCounterElement.textContent = pluralize(computerCards.length, "cards.singular", "cards.plural");
+	computerCardsCounterElement.textContent = pluralize(computerCards().length, "cards.singular", "cards.plural");
 
 	computerCardsCounterElement.classList.remove('cards-warning', 'cards-danger');
 
-	if (computerCards.length <= 3 && computerCards.length > 1) {
+	if (computerCards().length <= 3 && computerCards().length > 1) {
 		computerCardsCounterElement.classList.add('cards-warning');
 	}
 
-	if (computerCards.length === 1) {
+	if (computerCards().length === 1) {
 		computerCardsCounterElement.classList.add('cards-danger');
 	}
 };
@@ -200,7 +210,7 @@ const renderCardsOnTheTable = () => {
 			continue;
 		}
         for (const type of types) {
-			if (!playerCards.includes(i + type) && !computerCards.includes(i + type)) {
+			if (!playerCards().includes(i + type) && !computerCards().includes(i + type)) {
 				allCards.push(i + type);
 			}
         }
@@ -254,11 +264,11 @@ const playPlayerCard = (card) => {
 	const numero = cardSelected.substring(0, cardSelected.length - 1);
 	const desc   = t(`suits.${SUITS[cardSelected.substring(cardSelected.length - 1)]}`);
 	
-	playerCards.splice(playerCards.indexOf(cardSelected), 1);
+	playerCards().splice(playerCards().indexOf(cardSelected), 1);
 	
 	refreshGame();
 	
-	if (playerCards.length === 0) {
+	if (playerCards().length === 0) {
 		playerScore++;
 		gameOver = true;
 		playerScoreCounterElement.textContent = playerScore;
@@ -272,7 +282,7 @@ const playPlayerCard = (card) => {
 		} else {
 			const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
 			
-			const cardOfComputerDeleted = computerCards.splice(computerCards.indexOf(allowedComputerCards[aleatoryIndex]), 1)[0];
+			const cardOfComputerDeleted = computerCards().splice(computerCards().indexOf(allowedComputerCards[aleatoryIndex]), 1)[0];
 			
 			refreshGame();
 			
@@ -284,7 +294,7 @@ const playPlayerCard = (card) => {
 				suit: desc2
 			}));
 
-			if (computerCards.length === 0) {
+			if (computerCards().length === 0) {
 				computerScore++;
 				gameOver = true;
 				computerScoreCounterElement.textContent = computerScore;
@@ -295,12 +305,12 @@ const playPlayerCard = (card) => {
 	}
 };
 
-const nextTurnPressed = (playerCards, computerCards) => {
+const nextTurnPressed = () => {
 	const allowedComputerCards = getAllowedComputerCards();
 	
 	const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
 	
-	const cardOfComputerDeleted = computerCards.splice(computerCards.indexOf(allowedComputerCards[aleatoryIndex]), 1)[0];
+	const cardOfComputerDeleted = computerCards().splice(computerCards().indexOf(allowedComputerCards[aleatoryIndex]), 1)[0];
 		
 	refreshGame();
 	
@@ -312,7 +322,7 @@ const nextTurnPressed = (playerCards, computerCards) => {
 		suit: desc
 	}));
 	
-	if (computerCards.length === 0) {
+	if (computerCards().length === 0) {
 		computerScore++;
 		gameOver = true;
 		computerScoreCounterElement.textContent = computerScore;
@@ -331,7 +341,7 @@ const cardsOnTheTable = () => {
 		}
         for (const type of types) {
 			const card = i + type;
-			if (!playerCards.includes(card) && !computerCards.includes(card)) {
+			if (!playerCards().includes(card) && !computerCards().includes(card)) {
 				cardsOnTheTable.push(card);
 			}
         }
@@ -377,11 +387,11 @@ const renderTexts = () => {
 };
 
 const getAllowedPlayerCards = () => {
-	return allowedCards(playerCards, cardsOnTheTable());
+	return allowedCards(playerCards(), cardsOnTheTable());
 };
 
 const getAllowedComputerCards = () => {
-	return allowedCards(computerCards, cardsOnTheTable());
+	return allowedCards(computerCards(), cardsOnTheTable());
 };
 
 const allowedCards = (cards, cardsOnTheTable) => {
