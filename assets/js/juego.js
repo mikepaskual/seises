@@ -21,8 +21,6 @@ const STATUS_ICONS = {
 };
 
 let gameOver      = false;
-let playerScore   = 0;
-let computerScore = 0;
 
 const PLAYER   = 0;
 const COMPUTER = 1;
@@ -32,17 +30,7 @@ const PLAYER_TYPES = {
 	COMPUTER: "computer"
 };
 
-const createPlayer = (name, type) => ({
-	name,
-	type,
-	cards: [],
-	score: 0
-});
-
-let players = [
-	createPlayer("Jugador", PLAYER_TYPES.HUMAN), 
-	createPlayer("CPU", PLAYER_TYPES.COMPUTER)
-];
+let players = [];
 
 let currentPlayer = PLAYER;
 
@@ -84,24 +72,12 @@ const languageSelector = document.querySelector("#language-selector");
 
 newGameButton.addEventListener('click', () => {
 
-	setUp();
-
-	deal(shuffle());
-
-	refreshGame();
+	resetBoard();
+	startGame();
 
 });
 
-const setUp = () => {
-
-	gameOver = false;
-
-	currentPlayer = PLAYER;
-
-	players = [
-		createPlayer("Jugador", PLAYER_TYPES.HUMAN), 
-		createPlayer("CPU", PLAYER_TYPES.COMPUTER)
-	];
+const resetBoard = () => {
 	
 	playerCardsContainer.innerHTML   = '';
 	computerCardsContainer.innerHTML = '';
@@ -113,8 +89,36 @@ const setUp = () => {
 	
 	nextTurnContainer.innerHTML = '';
 
+};
+
+const startGame = () => {
+
+	gameOver      = false;
+	currentPlayer = PLAYER;
+
+	getPlayerCards(PLAYER).length   = 0;
+	getPlayerCards(COMPUTER).length = 0;
+
+	deal(shuffle());
+
+	refreshGame();
+
 	showStatus("info", t("status.newGame"));
 
+};
+
+const createPlayer = (name, type) => ({
+	name,
+	type,
+	cards: [],
+	score: 0
+});
+
+const createPlayers = () => {
+	players = [
+		createPlayer("Jugador", PLAYER_TYPES.HUMAN),
+		createPlayer("CPU", PLAYER_TYPES.COMPUTER)
+	]
 };
 
 const shuffle = () => {
@@ -370,13 +374,13 @@ const finishGame = (winner) => {
 
 	nextTurnContainer.innerHTML = '';
 
+	getPlayer(winner).score++;
+
 	if (winner === PLAYER) {
-		playerScore++;
-		playerScoreCounterElement.textContent = playerScore;
+		playerScoreCounterElement.textContent = getPlayer(winner).score;
 		showStatus("success", t("status.playerWins"));
 	} else {
-		computerScore++;
-		computerScoreCounterElement.textContent = computerScore;
+		computerScoreCounterElement.textContent = getPlayer(winner).score;
 		showStatus("success", t("status.computerWins"));
 	}
 };
@@ -506,4 +510,6 @@ languageSelector.addEventListener("change", event => {
 const language = localStorage.getItem("language") ?? DEFAULT_LANGUAGE;
 setLanguage(language);
 languageSelector.value = language;
+
+createPlayers();
 renderTexts();
