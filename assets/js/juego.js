@@ -27,15 +27,27 @@ let computerScore = 0;
 const PLAYER   = 0;
 const COMPUTER = 1;
 
+const PLAYER_TYPES = {
+	HUMAN:    "human",
+	COMPUTER: "computer"
+};
+
+const createPlayer = (name, type) => ({
+	name,
+	type,
+	cards: [],
+	score: 0
+});
+
 let players = [
-	[], 
-	[]
+	createPlayer("Jugador", PLAYER_TYPES.HUMAN), 
+	createPlayer("CPU", PLAYER_TYPES.COMPUTER)
 ];
 
 let currentPlayer = PLAYER;
 
-const playerCards   = () => players[PLAYER];
-const computerCards = () => players[COMPUTER];
+const playerCards   = () => players[PLAYER].cards;
+const computerCards = () => players[COMPUTER].cards;
 
 const playerCardsCounterElement   = document.querySelector('#player-cards-counter');
 const computerCardsCounterElement = document.querySelector('#computer-cards-counter');
@@ -71,9 +83,13 @@ const cardCounterElements = [
 const languageSelector = document.querySelector("#language-selector");
 
 newGameButton.addEventListener('click', () => {
+
 	setUp();
+
 	deal(shuffle());
+
 	refreshGame();
+
 });
 
 const setUp = () => {
@@ -83,8 +99,8 @@ const setUp = () => {
 	currentPlayer = PLAYER;
 
 	players = [
-		[], 
-		[]
+		createPlayer("Jugador", PLAYER_TYPES.HUMAN), 
+		createPlayer("CPU", PLAYER_TYPES.COMPUTER)
 	];
 	
 	playerCardsContainer.innerHTML   = '';
@@ -151,7 +167,7 @@ const renderCards = (playerIndex, container, options) => {
 		? getAllowedCards(playerIndex) 
 		: [];
 	
-	for (const card of players[playerIndex]) {
+	for (const card of getPlayerCards(playerIndex)) {
 		const cardImg = document.createElement('img');
 
 		cardImg.src = options.hidden 
@@ -175,7 +191,7 @@ const renderCards = (playerIndex, container, options) => {
 };
 
 const renderCardsCounter = (playerIndex, counterElement) => {
-	const cards = players[playerIndex];
+	const cards = getPlayerCards(playerIndex);
 
 	counterElement.textContent = pluralize(
 		cards.length, 
@@ -245,13 +261,15 @@ const nextTurnPressed = () => {
 
 const pluralize                  = (count, singularKey, pluralKey) => `${count} ${t(count === 1 ? singularKey : pluralKey)}`;
 const randomInt                  = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-const removeCard                 = (playerIndex, card) => players[playerIndex].splice(players[playerIndex].indexOf(card), 1)[0];
-const hasPlayerWon               = playerIndex => players[playerIndex].length === 0;
+const removeCard                 = (playerIndex, card) => getPlayerCards(playerIndex).splice(getPlayerCards(playerIndex).indexOf(card), 1)[0];
+const hasPlayerWon               = playerIndex => getPlayerCards(playerIndex).length === 0;
 const cardValue                  = card => parseInt(card.slice(0, -1), 10);
 const getAllowedPlayerCards      = () => getAllowedCards(PLAYER);
 const getAllowedComputerCards    = () => getAllowedCards(COMPUTER);
-const getAllowedCards            = playerIndex => allowedCards(players[playerIndex], cardsOnTheTable());
+const getAllowedCards            = playerIndex => allowedCards(getPlayerCards(playerIndex), cardsOnTheTable());
 const nextPlayer                 = () => currentPlayer = (currentPlayer + 1) % players.length;
+const getPlayerCards             = playerIndex => players[playerIndex].cards;
+const getPlayer                  = playerIndex => players[playerIndex];
 
 const executeCurrentPlayerTurn = () => {
 
@@ -376,7 +394,7 @@ const cardsOnTheTable = () => {
 			const card = `${i}${type}`;
 
 			const isInAnyPlayer = players.some(player => 
-				player.includes(card)
+				player.cards.includes(card)
 			); 
 
 			if (!isInAnyPlayer) {
