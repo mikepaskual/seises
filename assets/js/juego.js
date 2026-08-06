@@ -32,6 +32,8 @@ let players = [
 	[]
 ];
 
+let currentPlayer = PLAYER;
+
 const playerCards   = () => players[PLAYER];
 const computerCards = () => players[COMPUTER];
 
@@ -56,19 +58,29 @@ const statusPanel   = document.querySelector("#status-panel");
 const statusIcon    = document.querySelector("#status-icon");
 const statusMessage = document.querySelector("#status-message");
 
+const cardContainers = [
+	playerCardsContainer,
+	computerCardsContainer
+];
+
+const cardCounterElements = [
+	playerCardsCounterElement,
+	computerCardsCounterElement
+];
+
 const languageSelector = document.querySelector("#language-selector");
 
 newGameButton.addEventListener('click', () => {
 	setUp();
-	
-	const deck = shuffle();
-	deal(deck);
-	
+	deal(shuffle());
 	refreshGame();
 });
 
 const setUp = () => {
-	gameOver      = false;
+
+	gameOver = false;
+
+	currentPlayer = PLAYER;
 
 	players = [
 		[], 
@@ -86,6 +98,7 @@ const setUp = () => {
 	nextTurnContainer.innerHTML = '';
 
 	showStatus("info", t("status.newGame"));
+
 };
 
 const shuffle = () => {
@@ -116,14 +129,14 @@ const deal = (deck) => {
 
 const renderNextTurnButton = () => {
 	nextTurnContainer.innerHTML = '';
-		
-	const allowedPlayerCards = getAllowedPlayerCards();
 	
-	if (allowedPlayerCards.length === 0) {
-		const nextTurnButton = document.createElement('button');
+	if (getAllowedPlayerCards().length === 0) {
+		const nextTurnButton       = document.createElement('button');
 		nextTurnButton.textContent = t("buttons.nextTurn");
-		nextTurnButton.classList.add('btn', 'btn-warning');
-		nextTurnButton.id = 'next-turn';
+		nextTurnButton.id          = 'next-turn';
+		nextTurnButton.classList.add(
+			'btn', 
+			'btn-warning');
 		nextTurnButton.addEventListener('click', (event) => {
 			nextTurnPressed();
 		});
@@ -131,69 +144,54 @@ const renderNextTurnButton = () => {
 	}
 };
 
-const renderPlayerCards = () => {
-	playerCardsContainer.innerHTML = '';
+const renderCards = (playerIndex, container, options) => {
+	container.innerHTML = '';
 
-	const allowedPlayerCards = getAllowedPlayerCards();
+	const allowedCards = options.clickable 
+		? getAllowedCards(playerIndex) 
+		: [];
 	
-	for (const playerCard of playerCards()) {
-		const playerCardImg = document.createElement('img');
-		playerCardImg.src = `assets/images/cards/${ playerCard }.png`;
-		playerCardImg.classList.add('carta');
+	for (const card of players[playerIndex]) {
+		const cardImg = document.createElement('img');
 
-		if (!gameOver && allowedPlayerCards.includes(playerCard)) {
-			playerCardImg.classList.add('playable-card');
-			playerCardImg.addEventListener('click', () => {
-				playPlayerCard(playerCard);
+		cardImg.src = options.hidden 
+			? "assets/images/cards/R.png" 
+			: `assets/images/cards/${card}.png`;
+
+		cardImg.classList.add('carta');
+
+		if (options.clickable && !gameOver && allowedCards.includes(card)) {
+			cardImg.classList.add('playable-card');
+
+			cardImg.addEventListener('click', () => {
+				playPlayerCard(card);
 			});
 		} else {
-			playerCardImg.classList.add('locked-card');
+			cardImg.classList.add('locked-card');
 		}
 
-		playerCardsContainer.append(playerCardImg);
+		container.append(cardImg);
 	}
 };
 
-const pluralize = (count, singularKey, pluralKey) => {
-    return `${count} ${t(count === 1 ? singularKey : pluralKey)}`;
-};
+const renderCardsCounter = (playerIndex, counterElement) => {
+	const cards = players[playerIndex];
 
-const renderPlayerCardsCounter = () => {
-	playerCardsCounterElement.textContent = pluralize(playerCards().length, "cards.singular", "cards.plural");
+	counterElement.textContent = pluralize(
+		cards.length, 
+		"cards.singular", 
+		"cards.plural");
 
-	playerCardsCounterElement.classList.remove('cards-warning', 'cards-danger');
+	counterElement.classList.remove(
+		'cards-warning', 
+		'cards-danger');
 
-	if (playerCards().length <= 3 && playerCards().length > 1) {
-		playerCardsCounterElement.classList.add('cards-warning');
+	if (cards.length <= 3 && cards.length > 1) {
+		counterElement.classList.add('cards-warning');
 	}
 
-	if (playerCards().length === 1) {
-		playerCardsCounterElement.classList.add('cards-danger');
-	}
-};
-
-const renderComputerCards = () => {
-	computerCardsContainer.innerHTML = '';
-	
-	for (let i = 0; i < computerCards().length; i++) {
-		const computerCardImg = document.createElement('img');
-		computerCardImg.src = `assets/images/cards/R.png`;
-		computerCardImg.classList.add('carta');
-		computerCardsContainer.append(computerCardImg);
-	}
-};
-
-const renderComputerCardsCounter = () => {
-	computerCardsCounterElement.textContent = pluralize(computerCards().length, "cards.singular", "cards.plural");
-
-	computerCardsCounterElement.classList.remove('cards-warning', 'cards-danger');
-
-	if (computerCards().length <= 3 && computerCards().length > 1) {
-		computerCardsCounterElement.classList.add('cards-warning');
-	}
-
-	if (computerCards().length === 1) {
-		computerCardsCounterElement.classList.add('cards-danger');
+	if (cards.length === 1) {
+		counterElement.classList.add('cards-danger');
 	}
 };
 
@@ -203,18 +201,7 @@ const renderCardsOnTheTable = () => {
 	bastosCardsContainer.innerHTML  = '';
 	espadasCardsContainer.innerHTML = '';
  
-	let allCards = [];
-	
-	for (let i = lowerValue; i <= highestValue; i++) {
-		if (excludedValues.includes(i)) {
-			continue;
-		}
-        for (const type of types) {
-			if (!playerCards().includes(i + type) && !computerCards().includes(i + type)) {
-				allCards.push(i + type);
-			}
-        }
-    }
+	let allCards = cardsOnTheTable();
 	
 	for (const type of types) {
 		for (let i = 0; i < allCards.length; i++) {
@@ -252,83 +239,127 @@ const orderCards = (cardsToOrder) => {
 	});
 };
 
-const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const nextTurnPressed = () => { 
+	changeTurn();
+};
+
+const pluralize                  = (count, singularKey, pluralKey) => `${count} ${t(count === 1 ? singularKey : pluralKey)}`;
+const randomInt                  = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const removeCard                 = (playerIndex, card) => players[playerIndex].splice(players[playerIndex].indexOf(card), 1)[0];
+const hasPlayerWon               = playerIndex => players[playerIndex].length === 0;
+const cardValue                  = card => parseInt(card.slice(0, -1), 10);
+const getAllowedPlayerCards      = () => getAllowedCards(PLAYER);
+const getAllowedComputerCards    = () => getAllowedCards(COMPUTER);
+const getAllowedCards            = playerIndex => allowedCards(players[playerIndex], cardsOnTheTable());
+const nextPlayer                 = () => currentPlayer = (currentPlayer + 1) % players.length;
+
+const executeCurrentPlayerTurn = () => {
+
+	if (gameOver) {
+		return;
+	}
+
+	if (currentPlayer === PLAYER) {
+		return;
+	}
+
+	playComputerCard();
+
+};
+
+/*
+ * Cambia el turno al siguiente jugador,
+ * ejecuta automáticamente el turno de la IA
+ * y devuelve el control al jugador humano
+ */
+const changeTurn = () => {
+
+	nextPlayer();
+
+	executeCurrentPlayerTurn();
+
+	if (!gameOver) {
+		nextPlayer();
+	}
+};
+
+const playComputerCard = () => {
+	
+	const allowedComputerCards = getAllowedComputerCards();
+
+	if (allowedComputerCards.length === 0) {
+		showStatus("warning", t("status.computerPass"));
+		return;
+	}
+
+	const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
+
+	const cardPlayed = removeCard(
+		COMPUTER, 
+		allowedComputerCards[aleatoryIndex]
+	);
+
+	refreshGame();
+
+	showPlayedCard('computer', cardPlayed);
+
+	if (hasPlayerWon(COMPUTER)) {
+		finishGame(COMPUTER);
+	}
+
+};
+
+const showPlayedCard = (playerType, card) => {
+
+	const value = card.substring(0, card.length - 1);
+
+	const suit = t(
+		`suits.${SUITS[card.substring(card.length - 1)]}`);
+
+	showStatus(
+		playerType,
+		t(`status.${playerType}Plays`, {
+			value,
+			suit
+		})
+	);
+
+};
 
 const playPlayerCard = (card) => {
+
 	if (gameOver) {
 		return;
 	}
 	
-	const cardSelected = card;
-	
-	const numero = cardSelected.substring(0, cardSelected.length - 1);
-	const desc   = t(`suits.${SUITS[cardSelected.substring(cardSelected.length - 1)]}`);
-	
-	playerCards().splice(playerCards().indexOf(cardSelected), 1);
-	
+	removeCard(PLAYER, card);
+
+	showPlayedCard("player", card);
+
 	refreshGame();
 	
-	if (playerCards().length === 0) {
-		playerScore++;
-		gameOver = true;
-		playerScoreCounterElement.textContent = playerScore;
-		nextTurnContainer.innerHTML = '';
-		showStatus('success', t("status.playerWins"));
+	if (hasPlayerWon(PLAYER)) {
+		finishGame(PLAYER);
 	} else {
-		const allowedComputerCards = getAllowedComputerCards();
-		
-		if (allowedComputerCards.length === 0) {
-			showStatus('warning', t("status.computerPass"));
-		} else {
-			const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
-			
-			const cardOfComputerDeleted = computerCards().splice(computerCards().indexOf(allowedComputerCards[aleatoryIndex]), 1)[0];
-			
-			refreshGame();
-			
-			const numero2 = cardOfComputerDeleted.substring(0, cardOfComputerDeleted.length - 1);
-			const desc2   = t(`suits.${SUITS[cardOfComputerDeleted.substring(cardOfComputerDeleted.length - 1)]}`);
-
-			showStatus('computer', t("status.computerPlays", {
-				value: numero2,
-				suit: desc2
-			}));
-
-			if (computerCards().length === 0) {
-				computerScore++;
-				gameOver = true;
-				computerScoreCounterElement.textContent = computerScore;
-				nextTurnContainer.innerHTML = '';
-				showStatus('error', t("status.computerWins"));
-			}
-		}
+		changeTurn();
 	}
+
 };
 
-const nextTurnPressed = () => {
-	const allowedComputerCards = getAllowedComputerCards();
+const finishGame = (winner) => {
 	
-	const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
-	
-	const cardOfComputerDeleted = computerCards().splice(computerCards().indexOf(allowedComputerCards[aleatoryIndex]), 1)[0];
-		
-	refreshGame();
-	
-	const numero = cardOfComputerDeleted.substring(0, cardOfComputerDeleted.length - 1);
-	const desc   = t(`suits.${SUITS[cardOfComputerDeleted.substring(cardOfComputerDeleted.length - 1)]}`);
+	gameOver = true;
 
-	showStatus('computer', t('status.computerPlays', {
-		value: numero,
-		suit: desc
-	}));
-	
-	if (computerCards().length === 0) {
+	nextTurnContainer.innerHTML = '';
+
+	if (winner === PLAYER) {
+		playerScore++;
+		playerScoreCounterElement.textContent = playerScore;
+		showStatus("success", t("status.playerWins"));
+	} else {
 		computerScore++;
-		gameOver = true;
 		computerScoreCounterElement.textContent = computerScore;
-		nextTurnContainer.innerHTML = '';
-
-		showStatus('error', t("status.computerWins"));
+		showStatus("success", t("status.computerWins"));
 	}
 };
 
@@ -336,20 +367,25 @@ const cardsOnTheTable = () => {
 	let cardsOnTheTable = [];
 	
 	for (let i = lowerValue; i <= highestValue; i++) {
+
 		if (excludedValues.includes(i)) {
 			continue;
 		}
+
         for (const type of types) {
-			const card = i + type;
-			if (!playerCards().includes(card) && !computerCards().includes(card)) {
+			const card = `${i}${type}`;
+
+			const isInAnyPlayer = players.some(player => 
+				player.includes(card)
+			); 
+
+			if (!isInAnyPlayer) {
 				cardsOnTheTable.push(card);
 			}
         }
     }
 	return orderCards(cardsOnTheTable);
 };
-
-const cardValue = card => parseInt(card.slice(0, -1), 10);
 
 const nextCardValue = value => {
 	let next = value + 1;
@@ -368,30 +404,34 @@ const previousCardValue = value => {
 };
 
 const refreshGame = () => {
+	players.forEach((player, index) => {
+		renderCards(
+			index, 
+			cardContainers[index], 
+			{
+				hidden:    index !== PLAYER,
+				clickable: index === PLAYER
+			}
+		);
+
+		renderCardsCounter(
+			index, 
+			cardCounterElements[index]
+		);
+	});
+
 	renderNextTurnButton();
-	renderPlayerCards();
-	renderPlayerCardsCounter();
-	renderComputerCards();
-	renderComputerCardsCounter();
+	
 	renderCardsOnTheTable();
 };
 
 const renderTexts = () => {
     document
         .querySelectorAll("[data-i18n]")
-        .forEach(element => {
-            element.innerHTML = t(element.dataset.i18n);
-        });
-	renderPlayerCardsCounter();
-	renderComputerCardsCounter();
-};
+        .forEach(element => element.innerHTML = t(element.dataset.i18n)
+	);
 
-const getAllowedPlayerCards = () => {
-	return allowedCards(playerCards(), cardsOnTheTable());
-};
-
-const getAllowedComputerCards = () => {
-	return allowedCards(computerCards(), cardsOnTheTable());
+	players.forEach((player, index) => renderCardsCounter(index, cardCounterElements[index]));
 };
 
 const allowedCards = (cards, cardsOnTheTable) => {
