@@ -143,7 +143,7 @@ const readGameConfiguration = () => {
 	resetBoard();
 
 	startGame();
-	
+
 };
 
 startNewGameButton.addEventListener("click", readGameConfiguration);
@@ -178,6 +178,16 @@ const createPlayers = (configuration = null) => {
 		);
 
 	});
+
+};
+
+const renderPlayerNames = () => {
+
+	document.getElementById("player-name").textContent = 
+		getPlayer(PLAYER).name;
+
+	document.getElementById("computer-name").textContent =
+		getPlayer(COMPUTER).name;
 
 };
 
@@ -492,7 +502,9 @@ const previousCardValue = value => {
 };
 
 const refreshGame = () => {
+
 	players.forEach((player, index) => {
+
 		renderCards(
 			index, 
 			cardContainers[index], 
@@ -500,6 +512,7 @@ const refreshGame = () => {
 				hidden:    index !== PLAYER,
 				clickable: index === PLAYER
 			}
+
 		);
 
 		renderCardsCounter(
@@ -511,6 +524,9 @@ const refreshGame = () => {
 	renderNextTurnButton();
 	
 	renderCardsOnTheTable();
+
+	renderPlayerNames();
+	
 };
 
 const renderTexts = () => {

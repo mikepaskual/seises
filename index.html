@@ -51,27 +51,49 @@
     </div>
 
     <div class="panel-jugador">
-        <h2>
-			<span class="panel-title">
-				<span class="panel-title-icon">🧑</span>
-				<span data-i18n="headings.player"></span>
-			</span>
 
-			<small id="player-cards-counter"></small>
-		</h2>
+        <div class="player-header">
+
+			<div class="player-header-top">
+
+				<h2 class="panel-title">
+					<span class="panel-title-icon">🧑</span>
+					<span data-i18n="headings.player"></span>
+				</h2>
+
+				<small id="player-cards-counter"></small>
+
+			</div>
+
+			<div id="player-name" class="player-name"></div>
+
+		</div>
+		
         <div id="player-cards-container"></div>
+
     </div>
 
     <div class="panel-jugador">
-        <h2>
-			<span class="panel-title">
-				<span class="panel-title-icon">🤖</span>
-				<span data-i18n="headings.ia"></span> 
-			</span>
-			
-			<small id="computer-cards-counter"></small>
-		</h2>
+
+		<div class="player-header">
+
+			<div class="player-header-top">
+
+				<h2 class="panel-title">
+					<span class="panel-title-icon">🤖</span>
+					<span data-i18n="headings.ia"></span> 
+				</h2>
+
+				<small id="computer-cards-counter"></small>
+
+			</div>
+
+			<div id="computer-name" class="player-name"></div>
+
+		</div>
+
         <div id="computer-cards-container"></div>
+
     </div>
 
 	<div class="panel-mesa">
@@ -194,7 +216,7 @@
 					<div class="row g-3">
 						<div class="col-12">
 							<label for="cpu1Name" class="form-label" data-i18n="modal.newGame.opponentItem.0"></label>
-							<input id="cpu1Name" class="form-control" type="text" />
+							<input id="cpu1Name" class="form-control" type="text" value="marifern" />
 						</div>
 
 						<div class="col-12">
