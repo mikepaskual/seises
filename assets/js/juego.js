@@ -54,6 +54,9 @@ const computerScoreCounterElement = document.querySelector('#defeats-counter');
 const newGameButton     = document.querySelector('#new-game');
 const nextTurnContainer = document.querySelector('#next-turn-container');
 
+const humanPlayerNameInput = document.getElementById("humanPlayerName");
+const startNewGameButton   = document.getElementById("startNewGameButton");
+
 const opponentRadios = document.querySelectorAll("input[name='opponents']");
 const opponentInputs = [
 	document.getElementById('cpu1Name'),
@@ -118,6 +121,33 @@ const startGame = () => {
 
 };
 
+const readGameConfiguration = () => {
+
+	const opponentCount = parseInt(
+		document.querySelector("input[name='opponents']:checked").value, 10
+	);
+
+	const configuration = {
+
+		humanName: humanPlayerNameInput.value.trim(),
+		
+		opponents: opponentInputs
+			.slice(0, opponentCount)
+			.map(input => input.value.trim())
+	};
+
+	createPlayers(configuration);
+
+	newGameModal.hide();
+
+	resetBoard();
+
+	startGame();
+	
+};
+
+startNewGameButton.addEventListener("click", readGameConfiguration);
+
 const createPlayer = (name, type) => ({
 	name,
 	type,
@@ -125,11 +155,30 @@ const createPlayer = (name, type) => ({
 	score: 0
 });
 
-const createPlayers = () => {
+const createPlayers = (configuration = null) => {
+
+	if (configuration == null) {
+
+		players = [
+			createPlayer("Jugador", PLAYER_TYPES.HUMAN),
+			createPlayer("CPU",     PLAYER_TYPES.COMPUTER)
+		]
+
+		return;
+	}
+
 	players = [
-		createPlayer("Jugador", PLAYER_TYPES.HUMAN),
-		createPlayer("CPU", PLAYER_TYPES.COMPUTER)
-	]
+		createPlayer(configuration.humanName, PLAYER_TYPES.HUMAN)
+	];
+
+	configuration.opponents.forEach(opponentName => {
+
+		players.push(
+			createPlayer(opponentName, PLAYER_TYPES.COMPUTER)
+		);
+
+	});
+
 };
 
 const shuffle = () => {
