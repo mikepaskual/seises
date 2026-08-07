@@ -34,6 +34,10 @@ let players = [];
 
 let currentPlayer = PLAYER;
 
+const MAX_STATUS_MESSAGES = 5;
+
+let statusHistory = [];
+
 const playerCards   = () => players[PLAYER].cards;
 const computerCards = () => players[COMPUTER].cards;
 
@@ -526,7 +530,7 @@ const refreshGame = () => {
 	renderCardsOnTheTable();
 
 	renderPlayerNames();
-	
+
 };
 
 const renderTexts = () => {
@@ -573,13 +577,49 @@ const allowedCards = (cards, cardsOnTheTable) => {
 
 const showStatus = (type, message) => {
 
-    statusPanel.className = "status-panel";
-    statusPanel.classList.add(type);
+	statusHistory.unshift({
+		type,
+		message
+	});
 
-    statusIcon.textContent = STATUS_ICONS[type];
+	if (statusHistory.length > MAX_STATUS_MESSAGES) {
+		statusHistory.pop();
+	}
 
-    statusMessage.textContent = message;
+    renderStatusHistory();
 
+};
+
+const renderStatusHistory = () => {
+
+	statusPanel.innerHTML = "";
+
+	const history = [...statusHistory].reverse();
+
+	history.forEach((status, index) => {
+
+		const entry = document.createElement("div");
+
+		entry.classList.add("status-entry");
+
+		if (index === history.length - 1) {
+			entry.classList.add("current");
+		}
+
+		const icon = document.createElement("span");
+		icon.classList.add("status-entry-icon");
+		icon.textContent = STATUS_ICONS[status.type];
+
+		const text = document.createElement("span");
+		text.classList.add("status-entry-text");
+		text.textContent = status.message;
+
+		entry.append(icon, text);
+
+		statusPanel.append(entry);
+
+	});
+	
 };
 
 languageSelector.addEventListener("change", event => {
