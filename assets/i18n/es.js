@@ -36,6 +36,22 @@ const es = {
         },
         close: "¡Entiendo!"
     },
+    modal: {
+        newGame: {
+            cancel:            "Cancelar",
+            humanPlayer:       "Tu nombre",
+            numberOfOpponents: "Número de rivales",
+            opponents:         "Rivales",
+            opponentItem: [
+                "Rival 1",
+                "Rival 2",
+                "Rival 3",
+                "Rival 4"
+            ],
+            start: "Comenzar partida",
+            title: "Nueva partida"
+        }
+    },
     status: {
         computerPass:  "IA pasa turno.",
         computerPlays: "IA juega el {value} de {suit}.",

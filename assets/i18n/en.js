@@ -36,6 +36,22 @@ const en = {
         },
         close: "Got it!"
     },
+    modal: {
+        newGame: {
+            cancel:            "Cancel",
+            humanPlayer:       "Your name",
+            numberOfOpponents: "Number of opponents",
+            opponents:         "Opponents",
+            opponentItem: [
+                "Opponent 1",
+                "Opponent 2",
+                "Opponent 3",
+                "Opponent 4"
+            ],
+            start: "Start",
+            title: "New game"
+        }
+    },
     status: {
         computerPass:  "AI skips its turn.",
         computerPlays: "AI plays the {value} of {suit}.",

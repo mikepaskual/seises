@@ -20,7 +20,7 @@ const STATUS_ICONS = {
     error:    "💀"
 };
 
-let gameOver      = false;
+let gameOver = false;
 
 const PLAYER   = 0;
 const COMPUTER = 1;
@@ -54,9 +54,21 @@ const computerScoreCounterElement = document.querySelector('#defeats-counter');
 const newGameButton     = document.querySelector('#new-game');
 const nextTurnContainer = document.querySelector('#next-turn-container');
 
+const opponentRadios = document.querySelectorAll("input[name='opponents']");
+const opponentInputs = [
+	document.getElementById('cpu1Name'),
+	document.getElementById('cpu2Name'),
+	document.getElementById('cpu3Name'),
+	document.getElementById('cpu4Name'),
+];
+
 const statusPanel   = document.querySelector("#status-panel");
 const statusIcon    = document.querySelector("#status-icon");
 const statusMessage = document.querySelector("#status-message");
+
+const newGameModal = new bootstrap.Modal(
+    document.getElementById("newGameModal")
+);
 
 const cardContainers = [
 	playerCardsContainer,
@@ -72,8 +84,7 @@ const languageSelector = document.querySelector("#language-selector");
 
 newGameButton.addEventListener('click', () => {
 
-	resetBoard();
-	startGame();
+	newGameModal.show();
 
 });
 
@@ -145,6 +156,12 @@ const deal = (deck) => {
 
 	orderCards(playerCards());
 	orderCards(computerCards());
+};
+
+const updateOpponentInputs = (opponentCount) => {
+	opponentInputs.forEach((input, index) => {
+		input.disabled = index >= opponentCount;
+	});
 };
 
 const renderNextTurnButton = () => {
@@ -507,9 +524,22 @@ languageSelector.addEventListener("change", event => {
 	renderTexts();
 });
 
+opponentRadios.forEach(radio => {
+
+	radio.addEventListener("change", () => {
+
+		updateOpponentInputs(
+			parseInt(radio.value, 10)
+		);
+
+	});
+
+});
+
 const language = localStorage.getItem("language") ?? DEFAULT_LANGUAGE;
 setLanguage(language);
 languageSelector.value = language;
 
 createPlayers();
 renderTexts();
+updateOpponentInputs(1);
