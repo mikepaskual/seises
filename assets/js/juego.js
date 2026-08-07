@@ -230,19 +230,31 @@ const updateOpponentInputs = (opponentCount) => {
 };
 
 const renderNextTurnButton = () => {
+
 	nextTurnContainer.innerHTML = '';
+
+	if (gameOver) {
+		return;
+	}
 	
 	if (getAllowedPlayerCards().length === 0) {
+
 		const nextTurnButton       = document.createElement('button');
+
 		nextTurnButton.textContent = t("buttons.nextTurn");
+
 		nextTurnButton.id          = 'next-turn';
+		
 		nextTurnButton.classList.add(
 			'btn', 
 			'btn-warning');
+
 		nextTurnButton.addEventListener('click', (event) => {
 			nextTurnPressed();
 		});
+
 		nextTurnContainer.append(nextTurnButton);
+
 	}
 };
 
@@ -469,6 +481,8 @@ const finishGame = (winner) => {
 		computerScoreCounterElement.textContent = getPlayer(winner).score;
 		showStatus("error", t("status.computerWins"));
 	}
+
+	refreshGame();
 };
 
 const cardsOnTheTable = () => {
@@ -515,11 +529,13 @@ const refreshGame = () => {
 
 	players.forEach((player, index) => {
 
+		const hidden = index !== PLAYER && !gameOver;
+
 		renderCards(
 			index, 
 			cardContainers[index], 
 			{
-				hidden:    index !== PLAYER,
+				hidden,
 				clickable: index === PLAYER
 			}
 
