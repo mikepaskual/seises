@@ -57,6 +57,7 @@ const en = {
         computerPlays: "AI plays the {value} of {suit}.",
         computerWins:  "You lose. Game over.",
         newGame:       "A new game begins.",
+        playerPass:    "You skip your turn.",
         playerPlays:   "You play the {value} of {suit}.",
         playerWins:    "Congratulations! You win!"
     },

@@ -57,6 +57,7 @@ const es = {
         computerPlays: "IA juega el {value} de {suit}.",
         computerWins:  "Perdiste. Fin de la partida.",
         newGame:       "Comienza una nueva partida.",
+        playerPass:    "Pasas turno.",
         playerPlays:   "Juegas el {value} de {suit}.",
         playerWins:    "¡Has ganado!"
     },

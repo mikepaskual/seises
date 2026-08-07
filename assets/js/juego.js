@@ -34,8 +34,6 @@ let players = [];
 
 let currentPlayer = PLAYER;
 
-const MAX_STATUS_MESSAGES = 5;
-
 let statusHistory = [];
 
 const playerCards   = () => players[PLAYER].cards;
@@ -96,6 +94,8 @@ newGameButton.addEventListener('click', () => {
 });
 
 const resetBoard = () => {
+
+	statusPanel.innerHTML = '';
 	
 	playerCardsContainer.innerHTML   = '';
 	computerCardsContainer.innerHTML = '';
@@ -113,6 +113,8 @@ const startGame = () => {
 
 	gameOver      = false;
 	currentPlayer = PLAYER;
+
+	statusHistory = [];
 
 	getPlayerCards(PLAYER).length   = 0;
 	getPlayerCards(COMPUTER).length = 0;
@@ -339,8 +341,12 @@ const orderCards = (cardsToOrder) => {
 	});
 };
 
-const nextTurnPressed = () => { 
+const nextTurnPressed = () => {
+
+	showStatus("warning", t("status.playerPass"));
+
 	changeTurn();
+
 };
 
 const pluralize                  = (count, singularKey, pluralKey) => `${count} ${t(count === 1 ? singularKey : pluralKey)}`;
@@ -461,7 +467,7 @@ const finishGame = (winner) => {
 		showStatus("success", t("status.playerWins"));
 	} else {
 		computerScoreCounterElement.textContent = getPlayer(winner).score;
-		showStatus("success", t("status.computerWins"));
+		showStatus("error", t("status.computerWins"));
 	}
 };
 
@@ -582,7 +588,7 @@ const showStatus = (type, message) => {
 		message
 	});
 
-	if (statusHistory.length > MAX_STATUS_MESSAGES) {
+	if (statusHistory.length > players.length + 1) {
 		statusHistory.pop();
 	}
 
