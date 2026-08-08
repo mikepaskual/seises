@@ -1,8 +1,9 @@
 const en = {
     buttons: {
-        howToPlay: "How play",
-        newGame:   "New game",
-        nextTurn:  "Pass"
+        configureGame: "Configure game",
+        howToPlay:     "How play",
+        nextTurn:      "Pass",
+        startGame:     "Start game"
     },
     cards: {
         singular: "card",
@@ -17,40 +18,40 @@ const en = {
         player: "Player",
         table:  "Table"
     },
-    howToPlay: {
-        title: "How play",
-        objective: {
-            title:       "Objective",
-            description: "Be the first player to play all your cards."
-        },
-        rules: {
-            title: "Rules",
-            items: [
-                "Any <strong>Six</strong> starts a suit.",
-                "You can only play the card immediately above or below it in the same suit.",
-                "The Spanish deck follows this order:",
-                "After the <strong>7</strong>, the next card is the <strong>10</strong>.",
-                "If you can't play, your turn is skipped.",
-                "The first player with no cards remaining wins."
-            ]
-        },
-        close: "Got it!"
-    },
     modal: {
-        newGame: {
+        configureGame: {
+            accept:            "Accept",
             cancel:            "Cancel",
             humanPlayer:       "Your name",
             numberOfOpponents: "Number of opponents",
             opponents:         "Opponents",
             opponentItem: [
-                "Opponent 1",
-                "Opponent 2",
-                "Opponent 3",
-                "Opponent 4"
+                "Name of opponent 1",
+                "Name of opponent 2",
+                "Name of opponent 3",
+                "Name of opponent 4"
             ],
-            start: "Start",
-            title: "New game"
-        }
+            title: "Configuration game"
+        },
+        howToPlay: {
+            close: "Got it!",
+            objective: {
+                title:       "Objective",
+                description: "Be the first player to play all your cards."
+            },
+            rules: {
+                title: "Rules",
+                items: [
+                    "Any <strong>Six</strong> starts a suit.",
+                    "You can only play the card immediately above or below it in the same suit.",
+                    "The Spanish deck follows this order:",
+                    "After the <strong>7</strong>, the next card is the <strong>10</strong>.",
+                    "If you can't play, your turn is skipped.",
+                    "The first player with no cards remaining wins."
+                ]
+            },
+            title: "How play"
+        },
     },
     status: {
         computerPass:  "AI skips its turn.",

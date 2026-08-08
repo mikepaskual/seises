@@ -22,6 +22,15 @@ const STATUS_ICONS = {
 
 let gameOver = false;
 
+const GAME_STATES = {
+	NOT_CONFIGURED: "not-configured",
+	CONFIGURED:     "configured",
+	PLAYING:        "playing",
+	FINISHED:       "finished"
+};
+
+let gameState = GAME_STATES.NOT_CONFIGURED;
+
 const PLAYER   = 0;
 const COMPUTER = 1;
 
@@ -39,22 +48,19 @@ let statusHistory = [];
 const playerCards   = () => players[PLAYER].cards;
 const computerCards = () => players[COMPUTER].cards;
 
-const playerCardsCounterElement   = document.querySelector('#player-cards-counter');
-const computerCardsCounterElement = document.querySelector('#computer-cards-counter');
-
-const playerCardsContainer   = document.querySelector('#player-cards-container');
-const computerCardsContainer = document.querySelector('#computer-cards-container');
-
 const orosCardsContainer    = document.querySelector('#oros-cards-container');
 const copasCardsContainer   = document.querySelector('#copas-cards-container');
 const bastosCardsContainer  = document.querySelector('#bastos-cards-container');
 const espadasCardsContainer = document.querySelector('#espadas-cards-container');
 
-const playerScoreCounterElement   = document.querySelector('#victories-counter');
-const computerScoreCounterElement = document.querySelector('#defeats-counter');
-
-const newGameButton     = document.querySelector('#new-game');
 const nextTurnContainer = document.querySelector('#next-turn-container');
+
+const configureGameButton = document.querySelector('#configure-game');
+const startGameButton     = document.querySelector('#start-game');
+
+const scoreboardElement = document.querySelector('#scoreboard');
+const statusPanel       = document.querySelector('#status-panel');
+const playersContainer  = document.querySelector('#players-container');
 
 const humanPlayerNameInput = document.getElementById("humanPlayerName");
 const startNewGameButton   = document.getElementById("startNewGameButton");
@@ -67,38 +73,54 @@ const opponentInputs = [
 	document.getElementById('cpu4Name'),
 ];
 
-const statusPanel   = document.querySelector("#status-panel");
-const statusIcon    = document.querySelector("#status-icon");
-const statusMessage = document.querySelector("#status-message");
+const renderGameControls = () => {
+
+	configureGameButton.classList.add('d-none');
+	startGameButton.classList.add('d-none');
+
+	if (gameState === GAME_STATES.NOT_CONFIGURED || 
+			gameState === GAME_STATES.CONFIGURED || 
+			gameState === GAME_STATES.FINISHED) {
+		configureGameButton.classList.remove('d-none');
+	}
+
+	if (gameState === GAME_STATES.CONFIGURED || 
+			gameState === GAME_STATES.PLAYING || 
+			gameState === GAME_STATES.FINISHED) {
+		startGameButton.classList.remove('d-none');
+	}
+
+};
+
+startGameButton.addEventListener('click', () => {
+
+	gameState = GAME_STATES.PLAYING;
+
+	resetBoard();
+
+	startGame();
+
+	renderGameControls();
+});
 
 const newGameModal = new bootstrap.Modal(
     document.getElementById("newGameModal")
 );
 
-const cardContainers = [
-	playerCardsContainer,
-	computerCardsContainer
-];
-
-const cardCounterElements = [
-	playerCardsCounterElement,
-	computerCardsCounterElement
-];
-
 const languageSelector = document.querySelector("#language-selector");
-
-newGameButton.addEventListener('click', () => {
-
-	newGameModal.show();
-
-});
 
 const resetBoard = () => {
 
 	statusPanel.innerHTML = '';
 	
-	playerCardsContainer.innerHTML   = '';
-	computerCardsContainer.innerHTML = '';
+	players.forEach((player, index) => {
+
+		const cardsContainer = document.getElementById(`player-${index}-cards-container`);
+
+		if (cardsContainer) {
+			cardsContainer.innerHTML = '';
+		}
+	});
 	
 	orosCardsContainer.innerHTML    = '';
 	copasCardsContainer.innerHTML   = '';
@@ -116,8 +138,9 @@ const startGame = () => {
 
 	statusHistory = [];
 
-	getPlayerCards(PLAYER).length   = 0;
-	getPlayerCards(COMPUTER).length = 0;
+	players.forEach(player => {
+		player.cards.length = 0;
+	});
 
 	deal(shuffle());
 
@@ -144,11 +167,17 @@ const readGameConfiguration = () => {
 
 	createPlayers(configuration);
 
+	statusHistory = [];
+	statusPanel.innerHTML = '';
+	statusPanel.classList.add('d-none');
+
+	gameState = GAME_STATES.CONFIGURED;
+
 	newGameModal.hide();
 
-	resetBoard();
-
-	startGame();
+	renderPlayers();
+	renderScoreboard();
+	renderGameControls();
 
 };
 
@@ -198,34 +227,126 @@ const renderPlayerNames = () => {
 };
 
 const shuffle = () => {
+
 	let deck = [];
+
 	for (let i = lowerValue; i <= highestValue; i++) {
+
 		if (excludedValues.includes(i)) {
 			continue;
 		}
+
         for (const type of types) {
             deck.push(i + type);
         }
     }
+
 	return _.shuffle(deck);
+
 };
 
 const deal = (deck) => {
+
 	for (let i = 0; i < deck.length; i++) {
-		if (i % 2 === 0) {
-			playerCards().push(deck[i]);
-		} else {
-			computerCards().push(deck[i]);
-		}
+
+		const playerIndex = i % players.length;
+
+		players[playerIndex].cards.push(deck[i]);
+
 	}
 
-	orderCards(playerCards());
-	orderCards(computerCards());
+	players.forEach(player => orderCards(player.cards));
+
 };
 
-const updateOpponentInputs = (opponentCount) => {
+const updateOpponentInputs = opponentCount => {
+
 	opponentInputs.forEach((input, index) => {
-		input.disabled = index >= opponentCount;
+
+		const container = input.closest('.col-12');
+		const hidden    = index >= opponentCount;
+
+		container.classList.toggle('d-none', hidden);
+
+		input.disabled = hidden;
+
+		if (hidden) {
+			input.value = '';
+		}
+
+	});
+
+};
+
+const renderPlayers = () => {
+	
+	playersContainer.innerHTML = '';
+
+	players.forEach((player, index) => {
+
+		const playerPanel = document.createElement('div');
+		playerPanel.classList.add('panel-jugador', 'game-panel');
+
+		const playerHeader = document.createElement('div');
+		playerHeader.classList.add('player-header');
+
+		const playerHeaderTop = document.createElement('div');
+		playerHeaderTop.classList.add('player-header-top');
+
+		const title = document.createElement('h2');
+		title.classList.add('panel-title');
+
+		const icon = document.createElement('span');
+		icon.classList.add('panel-title-icon');
+		icon.textContent = player.type === PLAYER_TYPES.HUMAN
+			? '🧑'
+			: '🤖';
+
+		const name = document.createElement('span');
+		name.textContent = player.name;
+
+		title.append(icon, name);
+
+		const cardsCounter = document.createElement('small');
+		cardsCounter.id = `player-${index}-cards-counter`;
+
+		playerHeaderTop.append(title, cardsCounter);
+		playerHeader.append(playerHeaderTop);
+
+		const cardsContainer = document.createElement('div');
+		cardsContainer.id = `player-${index}-cards-container`;
+
+		playerPanel.append(playerHeader, cardsContainer);
+
+		playersContainer.append(playerPanel);
+	});
+};
+
+const renderScoreboard = () => {
+
+	scoreboardElement.innerHTML = '';
+
+	if (players.length === 0) {
+		scoreboardElement.classList.add('d-none');
+		return;
+	}
+
+	scoreboardElement.classList.remove('d-none');
+
+	players.forEach(player => {
+
+		const scoreItem = document.createElement('div');
+		scoreItem.classList.add('score-item');
+
+		const name = document.createElement('span');
+		name.textContent = player.name;
+
+		const score = document.createElement('span');
+		score.textContent = player.score;
+
+		scoreItem.append(name, score);
+
+		scoreboardElement.append(scoreItem);
 	});
 };
 
@@ -367,7 +488,6 @@ const removeCard                 = (playerIndex, card) => getPlayerCards(playerI
 const hasPlayerWon               = playerIndex => getPlayerCards(playerIndex).length === 0;
 const cardValue                  = card => parseInt(card.slice(0, -1), 10);
 const getAllowedPlayerCards      = () => getAllowedCards(PLAYER);
-const getAllowedComputerCards    = () => getAllowedCards(COMPUTER);
 const getAllowedCards            = playerIndex => allowedCards(getPlayerCards(playerIndex), cardsOnTheTable());
 const nextPlayer                 = () => currentPlayer = (currentPlayer + 1) % players.length;
 const getPlayerCards             = playerIndex => players[playerIndex].cards;
@@ -375,15 +495,11 @@ const getPlayer                  = playerIndex => players[playerIndex];
 
 const executeCurrentPlayerTurn = () => {
 
-	if (gameOver) {
+	if (gameOver || currentPlayer === PLAYER) {
 		return;
 	}
 
-	if (currentPlayer === PLAYER) {
-		return;
-	}
-
-	playComputerCard();
+	playComputerCard(currentPlayer);
 
 };
 
@@ -396,16 +512,20 @@ const changeTurn = () => {
 
 	nextPlayer();
 
-	executeCurrentPlayerTurn();
+	while (currentPlayer !== PLAYER && !gameOver) {
 
-	if (!gameOver) {
-		nextPlayer();
+		executeCurrentPlayerTurn();
+
+		if (!gameOver) {
+			nextPlayer();
+		}
 	}
+
 };
 
-const playComputerCard = () => {
+const playComputerCard = (playerIndex) => {
 	
-	const allowedComputerCards = getAllowedComputerCards();
+	const allowedComputerCards = getAllowedCards(playerIndex);
 
 	if (allowedComputerCards.length === 0) {
 		showStatus("warning", t("status.computerPass"));
@@ -415,7 +535,7 @@ const playComputerCard = () => {
 	const aleatoryIndex = randomInt(1, allowedComputerCards.length) - 1;
 
 	const cardPlayed = removeCard(
-		COMPUTER, 
+		playerIndex, 
 		allowedComputerCards[aleatoryIndex]
 	);
 
@@ -423,8 +543,8 @@ const playComputerCard = () => {
 
 	showPlayedCard('computer', cardPlayed);
 
-	if (hasPlayerWon(COMPUTER)) {
-		finishGame(COMPUTER);
+	if (hasPlayerWon(playerIndex)) {
+		finishGame(playerIndex);
 	}
 
 };
@@ -469,23 +589,27 @@ const playPlayerCard = (card) => {
 const finishGame = (winner) => {
 	
 	gameOver = true;
+	gameState = GAME_STATES.FINISHED;
 
 	nextTurnContainer.innerHTML = '';
 
 	getPlayer(winner).score++;
 
+	renderScoreboard();
+
 	if (winner === PLAYER) {
-		playerScoreCounterElement.textContent = getPlayer(winner).score;
 		showStatus("success", t("status.playerWins"));
 	} else {
-		computerScoreCounterElement.textContent = getPlayer(winner).score;
 		showStatus("error", t("status.computerWins"));
 	}
 
 	refreshGame();
+
+	renderGameControls();
 };
 
 const cardsOnTheTable = () => {
+
 	let cardsOnTheTable = [];
 	
 	for (let i = lowerValue; i <= highestValue; i++) {
@@ -507,6 +631,7 @@ const cardsOnTheTable = () => {
         }
     }
 	return orderCards(cardsOnTheTable);
+	
 };
 
 const nextCardValue = value => {
@@ -529,11 +654,17 @@ const refreshGame = () => {
 
 	players.forEach((player, index) => {
 
+		const cardsContainer = 
+			document.getElementById(`player-${index}-cards-container`);
+
+		const cardsCounter = 
+			document.getElementById(`player-${index}-cards-counter`);
+
 		const hidden = index !== PLAYER && !gameOver;
 
 		renderCards(
 			index, 
-			cardContainers[index], 
+			cardsContainer, 
 			{
 				hidden,
 				clickable: index === PLAYER
@@ -543,7 +674,7 @@ const refreshGame = () => {
 
 		renderCardsCounter(
 			index, 
-			cardCounterElements[index]
+			cardsCounter
 		);
 	});
 
@@ -551,17 +682,16 @@ const refreshGame = () => {
 	
 	renderCardsOnTheTable();
 
-	renderPlayerNames();
-
 };
 
 const renderTexts = () => {
+
     document
         .querySelectorAll("[data-i18n]")
-        .forEach(element => element.innerHTML = t(element.dataset.i18n)
+        .forEach(element => 
+			element.innerHTML = t(element.dataset.i18n)
 	);
 
-	players.forEach((player, index) => renderCardsCounter(index, cardCounterElements[index]));
 };
 
 const allowedCards = (cards, cardsOnTheTable) => {
@@ -598,6 +728,8 @@ const allowedCards = (cards, cardsOnTheTable) => {
 };
 
 const showStatus = (type, message) => {
+
+	statusPanel.classList.remove('d-none');
 
 	statusHistory.unshift({
 		type,
@@ -667,6 +799,8 @@ const language = localStorage.getItem("language") ?? DEFAULT_LANGUAGE;
 setLanguage(language);
 languageSelector.value = language;
 
-createPlayers();
 renderTexts();
+
+renderGameControls();
+
 updateOpponentInputs(1);

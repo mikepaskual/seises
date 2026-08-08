@@ -34,67 +34,31 @@
 	</header>
     
     <div class="container">
+
         <div class="panel-control game-panel">
-			<div class="scoreboard">
-				🏆 <span id="victories-counter">0</span>
-				<span class="score-separator">|</span>
-				💀 <span id="defeats-counter">0</span>
-			</div>
-			<button id="new-game" class="btn btn-primary" data-i18n="buttons.newGame"></button>
+
+			<button id="configure-game"
+					class="btn btn-primary"
+					data-bs-toggle="modal"
+					data-bs-target="#newGameModal"
+					data-i18n="buttons.configureGame">
+			</button>
+
+			<button id="start-game" 
+					class="btn btn-success" 
+					data-i18n="buttons.startGame">
+			</button>
+
 			<div id="next-turn-container"></div>
+
         </div>
 
-		<div id="status-panel" class="status-panel game-panel info">
-			<!--<span id="status-icon"></span>
-			<span id="status-message"></span>-->
-		</div>
+		<div id="scoreboard" class="game-panel d-none"></div>
+
+		<div id="status-panel" class="status-panel game-panel info d-none"></div>
     </div>
 
-    <div class="panel-jugador game-panel">
-
-        <div class="player-header">
-
-			<div class="player-header-top">
-
-				<h2 class="panel-title">
-					<span class="panel-title-icon">🧑</span>
-					<span data-i18n="headings.player"></span>
-				</h2>
-
-				<small id="player-cards-counter"></small>
-
-			</div>
-
-			<div id="player-name" class="player-name"></div>
-
-		</div>
-		
-        <div id="player-cards-container"></div>
-
-    </div>
-
-    <div class="panel-jugador game-panel">
-
-		<div class="player-header">
-
-			<div class="player-header-top">
-
-				<h2 class="panel-title">
-					<span class="panel-title-icon">🤖</span>
-					<span data-i18n="headings.ia"></span> 
-				</h2>
-
-				<small id="computer-cards-counter"></small>
-
-			</div>
-
-			<div id="computer-name" class="player-name"></div>
-
-		</div>
-
-        <div id="computer-cards-container"></div>
-
-    </div>
+    <div id="players-container" class="game-panel"></div>
 
 	<div class="panel-mesa game-panel">
 		<h2 class="mesa-titulo">
@@ -129,30 +93,49 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="howToPlayModal" tabindex="-1" role="dialog" aria-labelledby="howToPlayTitle" aria-hidden="true">
+	<div class="modal fade" 
+			id="howToPlayModal" 
+			tabindex="-1" 
+			role="dialog" 
+			aria-labelledby="howToPlayTitle" 
+			aria-hidden="true">
+
 		<div class="modal-dialog modal-lg" role="document">
+
 			<div class="modal-content">
+
 				<div class="modal-header">
+
 					<h5 class="modal-title" id="howToPlayTitle">
-						🃏 <span data-i18n="howToPlay.title"></span>
+						🃏 <span data-i18n="modal.howToPlay.title"></span>
 					</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+					<button type="button" 
+							class="btn-close" 
+							data-bs-dismiss="modal">
+					</button>
+
 				</div>
 
 				<div class="modal-body">
 					<p>
-						<strong data-i18n="howToPlay.objective.title"></strong>
+						<strong data-i18n="modal.howToPlay.objective.title"></strong>
 					</p>
-					<p data-i18n="howToPlay.objective.description"></p>
+
+					<p data-i18n="modal.howToPlay.objective.description"></p>
+
 					<hr>
+
 					<p>
-						<strong data-i18n="howToPlay.rules.title"></strong>
+						<strong data-i18n="modal.howToPlay.rules.title"></strong>
 					</p>
+
 					<ul>
-						<li data-i18n="howToPlay.rules.items.0"></li>
-						<li data-i18n="howToPlay.rules.items.1"></li>
-						<li data-i18n="howToPlay.rules.items.2"></li>
+						<li data-i18n="modal.howToPlay.rules.items.0"></li>
+						<li data-i18n="modal.howToPlay.rules.items.1"></li>
+						<li data-i18n="modal.howToPlay.rules.items.2"></li>
 					</ul>
+
 					<div class="text-center mb-3">
 						<div class="sequence">
 							<span>1</span>
@@ -167,77 +150,187 @@
 							<span>12</span>
 						</div>
 					</div>
+
 					<ul>
-						<li data-i18n="howToPlay.rules.items.3"></li>
-						<li data-i18n="howToPlay.rules.items.4"></li>
-						<li data-i18n="howToPlay.rules.items.5"></li>
+						<li data-i18n="modal.howToPlay.rules.items.3"></li>
+						<li data-i18n="modal.howToPlay.rules.items.4"></li>
+						<li data-i18n="modal.howToPlay.rules.items.5"></li>
 					</ul>
 				</div>
 
 				<div class="modal-footer">
-					<button class="btn btn-primary" data-bs-dismiss="modal" data-i18n="howToPlay.close"></button>
+					<button class="btn btn-primary" 
+							data-bs-dismiss="modal" 
+							data-i18n="modal.howToPlay.close">
+					</button>
 				</div>
+
 			</div>
+
 		</div>
+
 	</div>
 
-	<div class="modal fade" id="newGameModal" tabindex="-1" aria-labelledby="newGameModalLabel" aria-hidden="true">
+	<div class="modal fade" 
+			id="newGameModal" 
+			tabindex="-1" 
+			aria-labelledby="newGameModalLabel" 
+			aria-hidden="true">
+
 		<div class="modal-dialog modal-lg modal-dialog-centered">
+
 			<div class="modal-content">
+
 				<div class="modal-header">
-					<h5 class="modal-title" id="newGameModalLabel" data-i18n="modal.newGame.title"></h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+					<h5 class="modal-title" 
+							id="newGameModalLabel" 
+							data-i18n="modal.configureGame.title">
+					</h5>
+
+					<button type="button" 
+							class="btn-close" 
+							data-bs-dismiss="modal" 
+							aria-label="Close">
+					</button>
+
 				</div>
+
 				<div class="modal-body">
+
 					<div class="mb-4">
-						<label for="humanPlayerName" class="form-label" data-i18n="modal.newGame.humanPlayer"></label>
-						<input id="humanPlayerName" class="form-control" type="text" value="migupasc" />
+						<label for="humanPlayerName" 
+								class="form-label" 
+								data-i18n="modal.configureGame.humanPlayer">
+						</label>
+
+						<input id="humanPlayerName" 
+								class="form-control" 
+								type="text" 
+								maxlength="12" />
 					</div>
+
 					<div class="mb-4">
-						<label for="numberOfOpponents" class="form-label d-block" data-i18n="modal.newGame.numberOfOpponents"></label>
+						<label for="numberOfOpponents" 
+								class="form-label d-block" 
+								data-i18n="modal.configureGame.numberOfOpponents">
+						</label>
+
 						<div class="btn-group w-100" role="group">
-							<input type="radio" class="btn-check" name="opponents" id="opponents1" value="1" checked>
-							<label class="btn btn-outline-primary" for="opponents1">1</label>
+							<input type="radio" 
+									class="btn-check" 
+									name="opponents" 
+									id="opponents1" 
+									value="1" 
+									checked>
+							<label class="btn btn-outline-primary" 
+									for="opponents1">
+								1
+							</label>
 
-							<input type="radio" class="btn-check" name="opponents" id="opponents2" value="2">
-							<label class="btn btn-outline-primary" for="opponents2">2</label>
+							<input type="radio" 
+									class="btn-check" 
+									name="opponents" 
+									id="opponents2" 
+									value="2">
+							<label class="btn btn-outline-primary" 
+									for="opponents2">
+								2
+							</label>
 
-							<input type="radio" class="btn-check" name="opponents" id="opponents3" value="3">
-							<label class="btn btn-outline-primary" for="opponents3">3</label>
+							<input type="radio" 
+									class="btn-check" 
+									name="opponents" 
+									id="opponents3" 
+									value="3">
+							<label class="btn btn-outline-primary" 
+									for="opponents3">
+								3
+							</label>
 
-							<input type="radio" class="btn-check" name="opponents" id="opponents4" value="4">
-							<label class="btn btn-outline-primary" for="opponents4">4</label>
+							<input type="radio" 
+									class="btn-check" 
+									name="opponents" 
+									id="opponents4" 
+									value="4">
+							<label class="btn btn-outline-primary" 
+									for="opponents4">
+								4
+							</label>
 						</div>
 					</div>
 
 					<hr/>
 
-					<h6 class="mb-3" data-i18n="modal.newGame.opponents"></h6>
+					<h6 class="mb-3" 
+							data-i18n="modal.configureGame.opponents">
+					</h6>
+
 					<div class="row g-3">
+
 						<div class="col-12">
-							<label for="cpu1Name" class="form-label" data-i18n="modal.newGame.opponentItem.0"></label>
-							<input id="cpu1Name" class="form-control" type="text" value="marifern" />
+							<label for="cpu1Name" 
+									class="form-label" 
+									data-i18n="modal.configureGame.opponentItem.0">
+							</label>
+
+							<input id="cpu1Name" 
+									class="form-control" 
+									type="text" 
+									maxlength="12" />
 						</div>
 
 						<div class="col-12">
-							<label for="cpu2Name" class="form-label" data-i18n="modal.newGame.opponentItem.1"></label>
-							<input id="cpu2Name" class="form-control" type="text" />
+							<label for="cpu2Name" 
+									class="form-label" 
+									data-i18n="modal.configureGame.opponentItem.1">
+							</label>
+
+							<input id="cpu2Name" 
+									class="form-control" 
+									type="text"
+									maxlength="12" />
 						</div>
 
 						<div class="col-12">
-							<label for="cpu3Name" class="form-label" data-i18n="modal.newGame.opponentItem.2"></label>
-							<input id="cpu3Name" class="form-control" type="text" />
+							<label for="cpu3Name" 
+									class="form-label" 
+									data-i18n="modal.configureGame.opponentItem.2">
+							</label>
+
+							<input id="cpu3Name" 
+									class="form-control" 
+									type="text"
+									maxlength="12" />
 						</div>
 
 						<div class="col-12">
-							<label for="cpu4Name" class="form-label" data-i18n="modal.newGame.opponentItem.3"></label>
-							<input id="cpu4Name" class="form-control" type="text" />
+							<label for="cpu4Name" 
+									class="form-label" 
+									data-i18n="modal.configureGame.opponentItem.3">
+							</label>
+
+							<input id="cpu4Name" 
+									class="form-control" 
+									type="text"
+									maxlength="12" />
 						</div>
+
 					</div>
 				</div>
+
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="modal.newGame.cancel"></button>
-					<button type="button" class="btn btn-primary" id="startNewGameButton" data-i18n="modal.newGame.start"></button>
+					<button type="button" 
+							class="btn btn-secondary" 
+							data-bs-dismiss="modal" 
+							data-i18n="modal.configureGame.cancel">
+					</button>
+
+					<button type="button" 
+							class="btn btn-primary" 
+							id="startNewGameButton" 
+							data-i18n="modal.configureGame.accept">
+					</button>
 				</div>
 			</div>
 		</div>
