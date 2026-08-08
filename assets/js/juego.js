@@ -528,7 +528,9 @@ const playComputerCard = (playerIndex) => {
 	const allowedComputerCards = getAllowedCards(playerIndex);
 
 	if (allowedComputerCards.length === 0) {
-		showStatus("warning", t("status.computerPass"));
+		showStatus("warning", t("status.computerPass", {
+			name: getPlayer(playerIndex).name
+		}));
 		return;
 	}
 
@@ -541,7 +543,7 @@ const playComputerCard = (playerIndex) => {
 
 	refreshGame();
 
-	showPlayedCard('computer', cardPlayed);
+	showPlayedCard(playerIndex, cardPlayed);
 
 	if (hasPlayerWon(playerIndex)) {
 		finishGame(playerIndex);
@@ -549,19 +551,29 @@ const playComputerCard = (playerIndex) => {
 
 };
 
-const showPlayedCard = (playerType, card) => {
+const showPlayedCard = (playerIndex, card) => {
 
 	const value = card.substring(0, card.length - 1);
 
 	const suit = t(
 		`suits.${SUITS[card.substring(card.length - 1)]}`);
 
+	const playerType = playerIndex === PLAYER 
+		? "player"
+		: "computer";
+
+	const params = {
+		value,
+		suit
+	};
+
+	if (playerIndex !== PLAYER) {
+		params.name = getPlayer(playerIndex).name;
+	}
+
 	showStatus(
 		playerType,
-		t(`status.${playerType}Plays`, {
-			value,
-			suit
-		})
+		t(`status.${playerType}Plays`, params)
 	);
 
 };
@@ -574,7 +586,7 @@ const playPlayerCard = (card) => {
 	
 	removeCard(PLAYER, card);
 
-	showPlayedCard("player", card);
+	showPlayedCard(PLAYER, card);
 
 	refreshGame();
 	
@@ -600,7 +612,9 @@ const finishGame = (winner) => {
 	if (winner === PLAYER) {
 		showStatus("success", t("status.playerWins"));
 	} else {
-		showStatus("error", t("status.computerWins"));
+		showStatus("success", t("status.computerWins", {
+			name: getPlayer(winner).name
+		}));
 	}
 
 	refreshGame();
@@ -775,6 +789,14 @@ const renderStatusHistory = () => {
 	});
 	
 };
+
+document.querySelectorAll(
+		'#humanPlayerName, #cpu1Name, #cpu2Name, #cpu3Name, #cpu4Name')
+	.forEach(input => {
+		input.addEventListener('input', () => {
+			input.value = input.value.toUpperCase();
+		})
+	});
 
 languageSelector.addEventListener("change", event => {
 	const language = event.target.value;

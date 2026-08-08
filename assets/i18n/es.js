@@ -54,9 +54,9 @@ const es = {
         },
     },
     status: {
-        computerPass:  "IA pasa turno.",
-        computerPlays: "IA juega el {value} de {suit}.",
-        computerWins:  "Perdiste. Fin de la partida.",
+        computerPass:  "{name} pasa turno.",
+        computerPlays: "{name} juega el {value} de {suit}.",
+        computerWins:  "{name} gana.",
         newGame:       "Comienza una nueva partida.",
         playerPass:    "Pasas turno.",
         playerPlays:   "Juegas el {value} de {suit}.",

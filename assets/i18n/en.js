@@ -54,9 +54,9 @@ const en = {
         },
     },
     status: {
-        computerPass:  "AI skips its turn.",
-        computerPlays: "AI plays the {value} of {suit}.",
-        computerWins:  "You lose. Game over.",
+        computerPass:  "{name} skips its turn.",
+        computerPlays: "{name} plays the {value} of {suit}.",
+        computerWins:  "{name} wins.",
         newGame:       "A new game begins.",
         playerPass:    "You skip your turn.",
         playerPlays:   "You play the {value} of {suit}.",
