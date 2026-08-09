@@ -1,9 +1,11 @@
 const en = {
     buttons: {
-        configureGame: "Configure game",
-        howToPlay:     "How play",
-        nextTurn:      "Pass",
-        startGame:     "Start game"
+        configureGame:  "Configure game",
+        howToPlay:      "How play",
+        nextTurn:       "Pass",
+        startGame:      "Start game",
+        viewHistory:    "View history",
+        viewScoreboard: "View score"
     },
     cards: {
         singular: "card",
@@ -17,6 +19,10 @@ const en = {
         ia:     "AI",
         player: "Player",
         table:  "Table"
+    },
+    history: {
+        pass: "Passed",
+        play: "{value} of {suit}"
     },
     modal: {
         configureGame: {
@@ -32,6 +38,10 @@ const en = {
                 "Name of opponent 4"
             ],
             title: "Configuration game"
+        },
+        gameHistory: {
+            close: "Close",
+            title: "Game history"
         },
         howToPlay: {
             close: "Got it!",
@@ -52,6 +62,10 @@ const en = {
             },
             title: "How play"
         },
+        scoreboard: {
+            close: "Cerrar",
+            title: "Score"
+        }
     },
     status: {
         computerPass:  "{name} skips its turn.",

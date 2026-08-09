@@ -44,6 +44,7 @@ let players = [];
 let currentPlayer = PLAYER;
 
 let statusHistory = [];
+let gameHistory   = [];
 
 const playerCards   = () => players[PLAYER].cards;
 const computerCards = () => players[COMPUTER].cards;
@@ -58,9 +59,16 @@ const nextTurnContainer = document.querySelector('#next-turn-container');
 const configureGameButton = document.querySelector('#configure-game');
 const startGameButton     = document.querySelector('#start-game');
 
-const scoreboardElement = document.querySelector('#scoreboard');
-const statusPanel       = document.querySelector('#status-panel');
-const playersContainer  = document.querySelector('#players-container');
+const scoreboardElement       = document.querySelector('#scoreboard-modal-container');
+const viewScoreboardButton    = document.querySelector('#view-scoreboard');
+const scoreboardWinnerElement = document.querySelector('#scoreboard-winner');
+const scoreboardModalElement  = document.querySelector('#scoreboardModal');
+const statusPanel             = document.querySelector('#status-panel');
+const playersContainer        = document.querySelector('#players-container');
+const playerHandContainer     = document.querySelector('#player-hand-container');
+const playerCardsContainer    = document.querySelector('#player-cards-container');
+const gameHistoryContainer    = document.querySelector('#game-history-container');
+const viewHistoryButton       = document.querySelector('#view-history');
 
 const humanPlayerNameInput = document.getElementById("humanPlayerName");
 const startNewGameButton   = document.getElementById("startNewGameButton");
@@ -74,6 +82,9 @@ const opponentInputs = [
 ];
 
 const renderGameControls = () => {
+
+	viewHistoryButton.classList.add('d-none');
+	viewScoreboardButton.classList.add('d-none');
 
 	configureGameButton.classList.add('d-none');
 	startGameButton.classList.add('d-none');
@@ -90,7 +101,23 @@ const renderGameControls = () => {
 		startGameButton.classList.remove('d-none');
 	}
 
+	if (gameState === GAME_STATES.FINISHED) {
+		viewHistoryButton.classList.remove('d-none');
+	}
+
+	if (gameState == GAME_STATES.CONFIGURED || 
+			gameState == GAME_STATES.PLAYING || 
+			gameState == GAME_STATES.FINISHED) {
+		viewScoreboardButton.classList.remove('d-none');
+	}
+
 };
+
+viewScoreboardButton.addEventListener('click', () => {
+
+	renderScoreboard();
+
+});
 
 startGameButton.addEventListener('click', () => {
 
@@ -103,6 +130,12 @@ startGameButton.addEventListener('click', () => {
 	renderGameControls();
 });
 
+viewHistoryButton.addEventListener('click', () => {
+
+	renderGameHistory();
+
+});
+
 const newGameModal = new bootstrap.Modal(
     document.getElementById("newGameModal")
 );
@@ -112,6 +145,8 @@ const languageSelector = document.querySelector("#language-selector");
 const resetBoard = () => {
 
 	statusPanel.innerHTML = '';
+
+	playerHandContainer.classList.remove('d-none');
 	
 	players.forEach((player, index) => {
 
@@ -137,6 +172,7 @@ const startGame = () => {
 	currentPlayer = PLAYER;
 
 	statusHistory = [];
+	gameHistory   = [];
 
 	players.forEach(player => {
 		player.cards.length = 0;
@@ -144,9 +180,87 @@ const startGame = () => {
 
 	deal(shuffle());
 
+	renderPlayers();
+
 	refreshGame();
 
 	showStatus("info", t("status.newGame"));
+
+};
+
+const renderGameHistory = () => {
+
+	gameHistoryContainer.innerHTML = '';
+
+	gameHistory.forEach((move, index) => {
+
+		const entry = document.createElement('div');
+
+		entry.classList.add('game-history-entry');
+
+		const number = document.createElement('span');
+		number.classList.add('game-history-number');
+		number.textContent = index + 1;
+
+		const player = document.createElement('span');
+		player.classList.add('game-history-player');
+		player.textContent = getPlayer(move.playerIndex).name;
+
+		const action = document.createElement('span');
+		action.classList.add('game-history-action');
+
+		const cardSlot = document.createElement('span');
+		cardSlot.classList.add('game-history-card-slot');
+
+		const actionText = document.createElement('span');
+		actionText.classList.add('game-history-action-text');
+
+		if (move.type === 'pass') {
+
+			actionText.textContent = t("history.pass");
+
+		} else {
+
+			const cardImage = document.createElement('img');
+
+			cardImage.src = `assets/images/cards/${move.card}.png`;
+			cardImage.classList.add('game-history-card');
+
+			cardSlot.append(cardImage);
+
+			actionText.textContent = getCardName(move.card);
+
+		}
+
+		action.append(cardSlot, actionText);
+
+		entry.append(number, player, action);
+
+		gameHistoryContainer.append(entry);
+
+	});
+
+};
+
+const getCardName = (card) => {
+
+	const value = cardValue(card);
+	const suit  = SUITS[card.slice(-1)];
+
+	return t("history.play", {
+		value: value,
+		suit:  t(`suits.${suit}`)
+	});
+
+};
+
+const recordMove = (playerIndex, type, card = null) => {
+
+	gameHistory.push({
+		playerIndex,
+		type,
+		card
+	});
 
 };
 
@@ -279,59 +393,86 @@ const updateOpponentInputs = opponentCount => {
 };
 
 const renderPlayers = () => {
-	
-	playersContainer.innerHTML = '';
 
-	players.forEach((player, index) => {
+    playersContainer.innerHTML = '';
+    playersContainer.classList.add('players-bar');
 
-		const playerPanel = document.createElement('div');
-		playerPanel.classList.add('panel-jugador', 'game-panel');
+	const finished = gameState === GAME_STATES.FINISHED;
 
-		const playerHeader = document.createElement('div');
-		playerHeader.classList.add('player-header');
+	playerHandContainer.classList.toggle(
+		'd-none',
+		finished && playerCards().length === 0
+	);
 
-		const playerHeaderTop = document.createElement('div');
-		playerHeaderTop.classList.add('player-header-top');
+    players.forEach((player, index) => {
 
-		const title = document.createElement('h2');
-		title.classList.add('panel-title');
+		if (finished && (index === PLAYER || player.cards.length === 0)) {
+			return;
+		}
 
-		const icon = document.createElement('span');
-		icon.classList.add('panel-title-icon');
-		icon.textContent = player.type === PLAYER_TYPES.HUMAN
-			? '🧑'
-			: '🤖';
+        const playerPanel = document.createElement('div');
+        playerPanel.classList.add('player-summary');
 
-		const name = document.createElement('span');
-		name.textContent = player.name;
+        const playerInfo = document.createElement('div');
+        playerInfo.classList.add('player-info');
 
-		title.append(icon, name);
+        const icon = document.createElement('span');
+        icon.classList.add('player-summary-icon');
+        icon.textContent = player.type === PLAYER_TYPES.HUMAN
+    		? '🧑'
+    		: '🤖';
 
-		const cardsCounter = document.createElement('small');
-		cardsCounter.id = `player-${index}-cards-counter`;
+        const name = document.createElement('span');
+        name.classList.add('player-summary-name');
+        name.textContent = player.name;
 
-		playerHeaderTop.append(title, cardsCounter);
-		playerHeader.append(playerHeaderTop);
+        playerInfo.append(icon, name);
 
-		const cardsContainer = document.createElement('div');
-		cardsContainer.id = `player-${index}-cards-container`;
+		if (finished) {
 
-		playerPanel.append(playerHeader, cardsContainer);
+			const cardsContainer = document.createElement('div');
+			cardsContainer.classList.add('final-player-cards');
 
-		playersContainer.append(playerPanel);
-	});
+			player.cards.forEach(card => {
+
+				const cardImage = document.createElement('img');
+
+				cardImage.src = `assets/images/cards/${card}.png`;
+				cardImage.classList.add('final-player-card');
+
+				cardsContainer.append(cardImage);
+
+			});
+
+			playerPanel.classList.add('finished-player-summary');
+			playerPanel.append(playerInfo, cardsContainer);
+
+		} else {
+
+			const cardsInfo = document.createElement('div');
+			cardsInfo.classList.add('player-cards-info');
+
+			const cardBack = document.createElement('img');
+			cardBack.src = 'assets/images/cards/R.png';
+			cardBack.classList.add('player-card-back');
+			
+			const cardsCounter = document.createElement('small');
+			cardsCounter.id = `player-${index}-cards-counter`;
+
+			cardsInfo.append(cardsCounter, cardBack);
+
+			playerPanel.append(playerInfo, cardsInfo);
+
+		}
+		
+        playersContainer.append(playerPanel);
+    });
 };
 
 const renderScoreboard = () => {
 
+	scoreboardWinnerElement.textContent = '';
 	scoreboardElement.innerHTML = '';
-
-	if (players.length === 0) {
-		scoreboardElement.classList.add('d-none');
-		return;
-	}
-
-	scoreboardElement.classList.remove('d-none');
 
 	players.forEach(player => {
 
@@ -348,6 +489,23 @@ const renderScoreboard = () => {
 
 		scoreboardElement.append(scoreItem);
 	});
+};
+
+const renderScoreboardWinner = (winner) => {
+
+	scoreboardWinnerElement.innerHTML = '';
+
+	if (winner === PLAYER) {
+		scoreboardWinnerElement.textContent = t("status.playerWins");
+		return;
+	}
+
+	scoreboardWinnerElement.textContent = 
+		t("status.computerWins", { 
+			name: getPlayer(winner).name
+		}
+	);
+
 };
 
 const renderNextTurnButton = () => {
@@ -412,10 +570,7 @@ const renderCards = (playerIndex, container, options) => {
 const renderCardsCounter = (playerIndex, counterElement) => {
 	const cards = getPlayerCards(playerIndex);
 
-	counterElement.textContent = pluralize(
-		cards.length, 
-		"cards.singular", 
-		"cards.plural");
+	counterElement.textContent = cards.length;
 
 	counterElement.classList.remove(
 		'cards-warning', 
@@ -476,6 +631,8 @@ const orderCards = (cardsToOrder) => {
 
 const nextTurnPressed = () => {
 
+	recordMove(PLAYER, "pass");
+
 	showStatus("warning", t("status.playerPass"));
 
 	changeTurn();
@@ -528,9 +685,13 @@ const playComputerCard = (playerIndex) => {
 	const allowedComputerCards = getAllowedCards(playerIndex);
 
 	if (allowedComputerCards.length === 0) {
+
+		recordMove(playerIndex, "pass");
+
 		showStatus("warning", t("status.computerPass", {
 			name: getPlayer(playerIndex).name
 		}));
+
 		return;
 	}
 
@@ -540,6 +701,8 @@ const playComputerCard = (playerIndex) => {
 		playerIndex, 
 		allowedComputerCards[aleatoryIndex]
 	);
+
+	recordMove(playerIndex, "play", cardPlayed);
 
 	refreshGame();
 
@@ -586,6 +749,8 @@ const playPlayerCard = (card) => {
 	
 	removeCard(PLAYER, card);
 
+	recordMove(PLAYER, "play", card);
+
 	showPlayedCard(PLAYER, card);
 
 	refreshGame();
@@ -600,14 +765,21 @@ const playPlayerCard = (card) => {
 
 const finishGame = (winner) => {
 	
-	gameOver = true;
+	gameOver  = true;
 	gameState = GAME_STATES.FINISHED;
+
+	playerHandContainer.classList.toggle('d-none', winner === PLAYER);
 
 	nextTurnContainer.innerHTML = '';
 
 	getPlayer(winner).score++;
 
 	renderScoreboard();
+
+	renderScoreboardWinner(winner);
+
+	const scoreboardModal = bootstrap.Modal.getOrCreateInstance(scoreboardModalElement);
+	scoreboardModal.show();
 
 	if (winner === PLAYER) {
 		showStatus("success", t("status.playerWins"));
@@ -620,6 +792,10 @@ const finishGame = (winner) => {
 	refreshGame();
 
 	renderGameControls();
+
+	statusPanel.classList.add('d-none');
+
+	renderPlayers();
 };
 
 const cardsOnTheTable = () => {
@@ -668,29 +844,25 @@ const refreshGame = () => {
 
 	players.forEach((player, index) => {
 
-		const cardsContainer = 
-			document.getElementById(`player-${index}-cards-container`);
-
-		const cardsCounter = 
+		const cardsCounter =
 			document.getElementById(`player-${index}-cards-counter`);
 
-		const hidden = index !== PLAYER && !gameOver;
-
-		renderCards(
-			index, 
-			cardsContainer, 
-			{
-				hidden,
-				clickable: index === PLAYER
-			}
-
-		);
-
 		renderCardsCounter(
-			index, 
+			index,
 			cardsCounter
 		);
 	});
+
+	playerCardsContainer.innerHTML = '';
+
+	renderCards(
+		PLAYER,
+		playerCardsContainer,
+		{
+			hidden: false,
+			clickable: true
+		}
+	);
 
 	renderNextTurnButton();
 	
@@ -762,7 +934,7 @@ const renderStatusHistory = () => {
 
 	statusPanel.innerHTML = "";
 
-	const history = [...statusHistory].reverse();
+	const history = [...statusHistory];
 
 	history.forEach((status, index) => {
 
@@ -770,7 +942,7 @@ const renderStatusHistory = () => {
 
 		entry.classList.add("status-entry");
 
-		if (index === history.length - 1) {
+		if (index === 0) {
 			entry.classList.add("current");
 		}
 

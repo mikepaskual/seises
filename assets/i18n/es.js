@@ -1,9 +1,11 @@
 const es = {
     buttons: {
-        configureGame: "Configurar juego",
-        howToPlay:     "Cómo jugar",
-        nextTurn:      "Paso",
-        startGame:     "Iniciar partida"
+        configureGame:  "Configurar juego",
+        howToPlay:      "Cómo jugar",
+        nextTurn:       "Paso",
+        startGame:      "Iniciar partida",
+        viewHistory:    "Consultar movimientos",
+        viewScoreboard: "Consultar marcador"
     },
     cards: {
         singular: "carta",
@@ -17,6 +19,10 @@ const es = {
         ia:     "IA",
         player: "Jugador",
         table:  "Mesa de juego"
+    },
+    history: {
+        pass: "Pasó turno",
+        play: "{value} de {suit}"
     },
     modal: {
         configureGame: {
@@ -32,6 +38,10 @@ const es = {
                 "Nombre del rival 4"
             ],
             title: "Configuración del juego"
+        },
+        gameHistory: {
+            close: "Cerrar",
+            title: "Historial de movimientos"
         },
         howToPlay: {
             close: "¡Entiendo!",
@@ -52,6 +62,10 @@ const es = {
             },
             title: "Cómo jugar"
         },
+        scoreboard: {
+            close: "Cerrar",
+            title: "Marcador"
+        }
     },
     status: {
         computerPass:  "{name} pasa turno.",

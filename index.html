@@ -49,48 +49,58 @@
 					data-i18n="buttons.startGame">
 			</button>
 
-			<div id="next-turn-container"></div>
+			<button id="view-history"
+					class="btn btn-secondary d-none"
+					data-bs-toggle="modal"
+					data-bs-target="#gameHistoryModal"
+					data-i18n="buttons.viewHistory">
+			</button>
+
+			<button id="view-scoreboard"
+					class="btn btn-warning d-none"
+					data-bs-target="#scoreboardModal"
+					data-bs-toggle="modal"
+					data-i18n="buttons.viewScoreboard">
+			</button>
 
         </div>
 
-		<div id="scoreboard" class="game-panel d-none"></div>
-
-		<div id="status-panel" class="status-panel game-panel info d-none"></div>
     </div>
 
-    <div id="players-container" class="game-panel"></div>
-
 	<div class="panel-mesa game-panel">
-		<h2 class="mesa-titulo">
-			🃏 <span data-i18n="headings.table"></span>
-		</h2>
 
-		<div class="row">
-			<div class="col-md-6">
-				<div class="mesa-palo h-100">
-					<h4 data-i18n="suits.oros"></h4>
-					<div id="oros-cards-container"></div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="mesa-palo h-100">
-					<h4 data-i18n="suits.bastos"></h4>
-					<div id="bastos-cards-container"></div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="mesa-palo h-100">
-					<h4 data-i18n="suits.copas"></h4>
-					<div id="copas-cards-container"></div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="mesa-palo h-100">
-					<h4 data-i18n="suits.espadas"></h4>
-					<div id="espadas-cards-container"></div>
-				</div>
-			</div>
+		<div class="mesa-palo mesa-oros">
+			<div id="oros-cards-container"></div>
 		</div>
+
+		<div class="mesa-palo mesa-bastos">
+			<div id="bastos-cards-container"></div>
+		</div>
+
+		<div class="mesa-palo mesa-copas">
+			<div id="copas-cards-container"></div>
+		</div>
+
+		<div class="mesa-palo mesa-espadas">
+			<div id="espadas-cards-container"></div>
+		</div>
+
+	</div>
+
+	<div id="player-hand-container" class="game-panel">
+
+		<div id="player-cards-container"></div>
+
+		<div id="next-turn-container"></div>
+
+	</div>
+
+    <div id="players-container" 
+			class="game-panel">
+	</div>
+
+	<div id="status-panel" 
+			class="status-panel game-panel info d-none">
 	</div>
 
 	<div class="modal fade" 
@@ -100,7 +110,7 @@
 			aria-labelledby="howToPlayTitle" 
 			aria-hidden="true">
 
-		<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
 
 			<div class="modal-content">
 
@@ -184,8 +194,8 @@
 				<div class="modal-header">
 
 					<h5 class="modal-title" 
-							id="newGameModalLabel" 
-							data-i18n="modal.configureGame.title">
+							id="newGameModalLabel" >
+						⚙️ <span data-i18n="modal.configureGame.title"></span>
 					</h5>
 
 					<button type="button" 
@@ -334,6 +344,100 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<div class="modal fade"
+			id="scoreboardModal"
+			tabindex="-1"
+			aria-labelledby="scoreboardModalLabel"
+			aria-hidden="true">
+
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+
+			<div class="modal-content">
+
+				<div class="modal-header">
+
+					<h5 class="modal-title"
+							id="scoreboardModalLabel">
+						🏆 <span data-i18n="modal.scoreboard.title"></span>
+					</h5>
+
+					<button type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close">
+					</button>
+
+				</div>
+
+				<div class="modal-body">
+
+					<div id="scoreboard-winner"></div>
+
+					<div id="scoreboard-modal-container"></div>
+
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button"
+							class="btn btn-primary"
+							data-bs-dismiss="modal"
+							data-i18n="modal.scoreboard.close">
+					</button>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="modal fade"
+			id="gameHistoryModal"
+			tabindex="-1"
+			aria-labelledby="gameHistoryModalLabel"
+			aria-hidden="true">
+
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+
+			<div class="modal-content">
+
+				<div class="modal-header">
+
+					<h5 class="modal-title"
+							id="gameHistoryModalLabel">
+						📜 <span data-i18n="modal.gameHistory.title"></span>
+					</h5>
+
+					<button type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close">
+					</button>
+
+				</div>
+
+				<div class="modal-body">
+					<div id="game-history-container"></div>
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button"
+							class="btn btn-primary"
+							data-bs-dismiss="modal"
+							data-i18n="modal.gameHistory.close">
+					</button>
+
+				</div>
+
+			</div>
+
+		</div>
+
 	</div>
 	
 	<footer class="footer">

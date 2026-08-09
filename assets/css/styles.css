@@ -154,23 +154,6 @@ html, body {
     letter-spacing: 2px;
 }
 
-.mesa-palo {
-    background: rgba(255,255,255,.015);
-    border: 1px solid rgba(255,255,255,.06);
-    border-radius: 10px;
-    padding: 20px;
-    min-height: 180px;
-}
-
-.mesa-palo h4 {
-    text-align: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255,255,255,.12);
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
 .game-panel {
     width: 100%;
     max-width: 1200px;
@@ -216,48 +199,56 @@ html, body {
     align-items:center;
 }
 
-#scoreboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-
-    padding: 18px 20px;
-
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.15);
-    border-radius: 12px;
-
-    box-shadow: 0 4px 12px rgba(0,0,0,.25);
+#scoreboard-modal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.score-item {
+#scoreboard-modal-container .score-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
 
     padding: 12px 16px;
 
-    background: rgba(0,0,0,.12);
-    border: 1px solid rgba(255,255,255,.10);
-    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid rgba(24,54,26,.12);
+    border-radius: 9px;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,.08);
+
+    transition: transform .15s ease, box-shadow .15s ease;
 }
 
-.score-item span:first-child {
+#scoreboard-modal-container .score-item:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 4px 10px rgba(0,0,0,.12);
+}
+
+#scoreboard-modal-container .score-item span:first-child {
     font-weight: 600;
     letter-spacing: .5px;
+
+    color: #18361A;
 }
 
-.score-item span:last-child {
-    min-width: 32px;
+#scoreboard-modal-container .score-item span:last-child {
+    min-width: 38px;
+
+    padding: 4px 9px;
 
     text-align: center;
 
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     font-weight: 700;
 
-    background: rgba(255,255,255,.10);
-    border-radius: 6px;
-    padding: 3px 8px;
+    color: #18361A;
+
+    background: rgba(212,175,55,.16);
+    border: 1px solid rgba(212,175,55,.35);
+    border-radius: 7px;
 }
 
 .scoreboard {
@@ -346,16 +337,6 @@ html, body {
     color: #212529 !important;
 }
 
-.modal-content {
-    color: #212529;
-}
-
-.modal-header,
-.modal-body,
-.modal-footer {
-    color: #212529;
-}
-
 .playable-card {
     cursor:pointer;
 
@@ -429,6 +410,797 @@ html, body {
     left: 40px;
 }
 
-.panel-mesa .row > div {
-    margin-bottom: 20px;
+.panel-mesa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    position: relative;
+
+    min-height: 240px;
+}
+
+.mesa-palo {
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1rem;
+
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.panel-mesa::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 2rem;
+    right: 2rem;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.panel-mesa::after {
+    content: "";
+    position: absolute;
+    top: 2rem;
+    bottom: 2rem;
+    left: 50%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.player-cards-info {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.player-card-back {
+    width: 20px;
+    height: auto;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+}
+
+.players-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+
+    padding: 12px;
+    margin: 20px auto 25px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+}
+
+.player-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-width: 0;
+
+    padding: 10px 12px;
+
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+
+    min-width: 0;
+}
+
+.player-summary-icon {
+    flex-shrink: 0;
+}
+
+.player-summary-name {
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-cards-info {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+
+    flex-shrink: 0;
+}
+
+.player-card-back {
+    width: 20px;
+    height: auto;
+
+    border-radius: 2px;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+}
+
+#player-hand-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 130px;
+
+    margin: 20px auto;
+    padding: 10px 30px;
+
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 12px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .20);
+}
+
+#player-cards-container {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#player-cards-container .carta {
+    left: 0;
+}
+
+#player-cards-container .carta:first-child {
+    margin-left: 0;
+}
+
+#next-turn-container {
+    flex-shrink: 0;
+    margin-left: 25px;
+}
+
+/* =========================================
+   HISTORIAL DE MOVIMIENTOS
+   ========================================= */
+
+.game-history-entry {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 55px;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.game-history-entry:last-child {
+    border-bottom: none;
+}
+
+.game-history-number {
+    width: 35px;
+    text-align: right;
+    font-weight: bold;
+    color: #6c757d;
+}
+
+.game-history-player {
+    width: 120px;
+    font-weight: bold;
+}
+
+.game-history-action {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 0.75rem;
+}
+
+.game-history-card-slot {
+    width: 40px;
+    height: 55px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-history-card {
+    width: 40px;
+    height: 55px;
+    object-fit: contain;
+}
+
+.game-history-action-text {
+    white-space: nowrap;
+}
+
+#game-history-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* =========================================
+   MODAL DE MARCADOR
+   ========================================= */
+
+#scoreboardModal .modal-content {
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+
+    background: #f8f8f8;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.45),
+        0 0 0 1px rgba(212,175,55,.35);
+}
+
+
+/* -----------------------------------------
+   CABECERA
+   ----------------------------------------- */
+
+#scoreboardModal .modal-header {
+    background: #18361A;
+    color: #F8F8F8;
+
+    border-bottom: 2px solid rgba(212,175,55,.7);
+
+    padding: 18px 22px;
+}
+
+#scoreboardModal .modal-title {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#scoreboardModal .modal-header .btn-close {
+    filter: invert(1);
+    opacity: .8;
+}
+
+#scoreboardModal .modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+
+/* -----------------------------------------
+   CUERPO
+   ----------------------------------------- */
+
+#scoreboardModal .modal-body {
+    padding: 20px;
+}
+
+
+/* -----------------------------------------
+   GANADOR
+   ----------------------------------------- */
+
+#scoreboard-winner:not(:empty) {
+    margin-bottom: 18px;
+    padding: 14px 18px;
+
+    text-align: center;
+
+    background: rgba(212,175,55,.12);
+    border: 1px solid rgba(212,175,55,.45);
+    border-radius: 10px;
+
+    color: #18361A;
+
+    font-size: 1.15rem;
+    font-weight: 700;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+#scoreboard-winner:not(:empty)::before {
+    content: "🏆";
+    margin-right: .5rem;
+}
+
+
+/* -----------------------------------------
+   MARCADOR
+   ----------------------------------------- */
+
+#scoreboard-modal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#scoreboard-modal-container .score-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px 16px;
+
+    background: #ffffff;
+    border: 1px solid rgba(24,54,26,.12);
+    border-radius: 9px;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,.08);
+
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+#scoreboard-modal-container .score-item:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 4px 10px rgba(0,0,0,.12);
+}
+
+#scoreboard-modal-container .score-item span:first-child {
+    font-weight: 600;
+    letter-spacing: .5px;
+
+    color: #18361A;
+}
+
+#scoreboard-modal-container .score-item span:last-child {
+    min-width: 38px;
+
+    padding: 4px 9px;
+
+    text-align: center;
+
+    font-size: 1.15rem;
+    font-weight: 700;
+
+    color: #18361A;
+
+    background: rgba(212,175,55,.16);
+    border: 1px solid rgba(212,175,55,.35);
+    border-radius: 7px;
+}
+
+
+/* -----------------------------------------
+   FOOTER
+   ----------------------------------------- */
+
+#scoreboardModal .modal-footer {
+    background: #f8f8f8;
+
+    border-top: 1px solid rgba(24,54,26,.12);
+
+    padding: 14px 22px;
+}
+
+#scoreboardModal .modal-footer .btn {
+    min-width: 90px;
+
+    background: #18361A;
+    border-color: #18361A;
+
+    color: #F8F8F8;
+}
+
+#scoreboardModal .modal-footer .btn:hover {
+    background: #244d27;
+    border-color: #244d27;
+}
+
+/* =========================================
+   MODAL CÓMO JUGAR
+   ========================================= */
+
+#howToPlayModal .modal-content {
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+
+    background: #f8f8f8;
+    color: #212529;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.45),
+        0 0 0 1px rgba(212,175,55,.35);
+}
+
+
+/* -----------------------------------------
+   CABECERA
+   ----------------------------------------- */
+
+#howToPlayModal .modal-header {
+    background: #18361A;
+    color: #F8F8F8;
+
+    border-bottom: 2px solid rgba(212,175,55,.7);
+
+    padding: 18px 22px;
+}
+
+#howToPlayModal .modal-title {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#howToPlayModal .modal-header .btn-close {
+    filter: invert(1);
+    opacity: .8;
+}
+
+#howToPlayModal .modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+
+/* -----------------------------------------
+   CUERPO
+   ----------------------------------------- */
+
+#howToPlayModal .modal-body {
+    padding: 20px 24px;
+}
+
+#howToPlayModal .modal-body hr {
+    margin: 1.5rem 0;
+
+    border-color: rgba(24,54,26,.15);
+}
+
+#howToPlayModal .modal-body strong {
+    color: #18361A;
+    font-size: 1.05rem;
+}
+
+#howToPlayModal .modal-body p {
+    line-height: 1.6;
+}
+
+#howToPlayModal .modal-body ul {
+    padding-left: 1.4rem;
+}
+
+#howToPlayModal .modal-body li {
+    margin-bottom: .55rem;
+    line-height: 1.5;
+}
+
+
+/* -----------------------------------------
+   SECUENCIA DE CARTAS
+   ----------------------------------------- */
+
+#howToPlayModal .sequence {
+    padding: 12px 16px;
+
+    background: rgba(212,175,55,.10);
+    border: 1px solid rgba(212,175,55,.35);
+    border-radius: 10px;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
+
+
+/* -----------------------------------------
+   FOOTER
+   ----------------------------------------- */
+
+#howToPlayModal .modal-footer {
+    background: #f8f8f8;
+
+    border-top: 1px solid rgba(24,54,26,.12);
+
+    padding: 14px 22px;
+}
+
+#howToPlayModal .modal-footer .btn {
+    min-width: 90px;
+
+    background: #18361A;
+    border-color: #18361A;
+
+    color: #F8F8F8;
+}
+
+#howToPlayModal .modal-footer .btn:hover {
+    background: #244d27;
+    border-color: #244d27;
+}
+
+/* =========================================
+   MODAL CONFIGURAR JUEGO
+   ========================================= */
+
+#newGameModal .modal-content {
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+
+    background: #f8f8f8;
+    color: #212529;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.45),
+        0 0 0 1px rgba(212,175,55,.35);
+}
+
+
+/* -----------------------------------------
+   CABECERA
+   ----------------------------------------- */
+
+#newGameModal .modal-header {
+    background: #18361A;
+    color: #F8F8F8;
+
+    border-bottom: 2px solid rgba(212,175,55,.7);
+
+    padding: 18px 22px;
+}
+
+#newGameModal .modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#newGameModal .modal-header .btn-close {
+    filter: invert(1);
+    opacity: .8;
+}
+
+#newGameModal .modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+
+/* -----------------------------------------
+   CUERPO
+   ----------------------------------------- */
+
+#newGameModal .modal-body {
+    padding: 24px;
+}
+
+#newGameModal .modal-body hr {
+    margin: 1.5rem 0;
+
+    border-color: rgba(24,54,26,.15);
+}
+
+#newGameModal .form-label {
+    color: #18361A;
+    font-weight: 600;
+}
+
+
+/* -----------------------------------------
+   CAMPOS DE TEXTO
+   ----------------------------------------- */
+
+#newGameModal .form-control {
+    border: 1px solid rgba(24,54,26,.25);
+    border-radius: 8px;
+
+    padding: 9px 12px;
+
+    background: #ffffff;
+}
+
+#newGameModal .form-control:focus {
+    border-color: rgba(212,175,55,.9);
+
+    box-shadow:
+        0 0 0 .2rem rgba(212,175,55,.18);
+}
+
+
+/* -----------------------------------------
+   NÚMERO DE RIVALES
+   ----------------------------------------- */
+
+#newGameModal .btn-outline-primary {
+    color: #18361A;
+
+    border-color: rgba(24,54,26,.35);
+
+    background: #ffffff;
+}
+
+#newGameModal .btn-outline-primary:hover {
+    color: #F8F8F8;
+
+    background: #18361A;
+    border-color: #18361A;
+}
+
+#newGameModal .btn-check:checked + .btn-outline-primary {
+    color: #F8F8F8;
+
+    background: #18361A;
+    border-color: #18361A;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(212,175,55,.6);
+}
+
+
+/* -----------------------------------------
+   FOOTER
+   ----------------------------------------- */
+
+#newGameModal .modal-footer {
+    background: #f8f8f8;
+
+    border-top: 1px solid rgba(24,54,26,.12);
+
+    padding: 14px 22px;
+}
+
+#newGameModal .modal-footer .btn {
+    min-width: 100px;
+}
+
+#newGameModal .modal-footer .btn-secondary {
+    color: #18361A;
+
+    background: #ffffff;
+    border-color: rgba(24,54,26,.3);
+}
+
+#newGameModal .modal-footer .btn-secondary:hover {
+    color: #18361A;
+
+    background: #eef2ee;
+    border-color: #18361A;
+}
+
+#newGameModal .modal-footer .btn-primary {
+    background: #18361A;
+    border-color: #18361A;
+
+    color: #F8F8F8;
+}
+
+#newGameModal .modal-footer .btn-primary:hover {
+    background: #244d27;
+    border-color: #244d27;
+}
+
+/* =========================================
+   MODAL CONSULTA MOVIMIENTOS
+   ========================================= */
+
+#gameHistoryModal .modal-content {
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+
+    background: #f8f8f8;
+    color: #212529;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.45),
+        0 0 0 1px rgba(212,175,55,.35);
+}
+
+
+/* -----------------------------------------
+   CABECERA
+   ----------------------------------------- */
+
+#gameHistoryModal .modal-header {
+    background: #18361A;
+    color: #F8F8F8;
+
+    border-bottom: 2px solid rgba(212,175,55,.7);
+
+    padding: 18px 22px;
+}
+
+#gameHistoryModal .modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#gameHistoryModal .modal-header .btn-close {
+    filter: invert(1);
+    opacity: .8;
+}
+
+#gameHistoryModal .modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+
+/* -----------------------------------------
+   CUERPO
+   ----------------------------------------- */
+
+#gameHistoryModal .modal-body {
+    padding: 20px 24px;
+}
+
+
+/* -----------------------------------------
+   FOOTER
+   ----------------------------------------- */
+
+#gameHistoryModal .modal-footer {
+    background: #f8f8f8;
+
+    border-top: 1px solid rgba(24,54,26,.12);
+
+    padding: 14px 22px;
+}
+
+#gameHistoryModal .modal-footer .btn {
+    min-width: 90px;
+
+    background: #18361A;
+    border-color: #18361A;
+
+    color: #F8F8F8;
+}
+
+#gameHistoryModal .modal-footer .btn:hover {
+    background: #244d27;
+    border-color: #244d27;
+}
+
+/* =========================================
+   CARTAS FINALES DE LOS RIVALES
+   ========================================= */
+
+.finished-player-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    gap: 10px;
+}
+
+.finished-player-summary .player-info {
+    width: 100%;
+}
+
+.final-player-cards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    width: 100%;
+}
+
+.final-player-card {
+    width: 45px;
+    height: auto;
+
+    border-radius: 3px;
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .35);
 }
