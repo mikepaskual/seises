@@ -20,6 +20,55 @@ const STATUS_ICONS = {
     error:    "💀"
 };
 
+const DEFAULT_OPPONENT_NAMES = [
+	'ASDF',
+	'ZXCV',
+	'ZCVV',
+	'QEWE',
+	'HFF',
+	'ADSGFAS'
+];
+
+const getRandomOpponentName = usedNames => {
+
+	const availableNames = DEFAULT_OPPONENT_NAMES.filter(
+		name => !usedNames.has(name)
+	);
+
+	if (availableNames.length === 0) {
+		return null;
+	}
+
+	const randomIndex = Math.floor(
+		Math.random() * availableNames.length
+	);
+
+	return availableNames[randomIndex];
+};
+
+const generateOpponentNames = (humanName, opponentNames) => {
+
+	const usedNames = new Set(
+		humanName.toUpperCase(),
+		...opponentNames
+			.filter(name => name !== "")
+			.map(name => name.toUpperCase())
+	);
+
+	return opponentNames.map(name => {
+
+		if (name !== "") {
+			return name.toUpperCase();
+		}
+
+		const generatedName = getRandomOpponentName(usedNames);
+
+		usedNames.add(generatedName);
+
+		return generatedName;
+	});
+};
+
 let gameOver = false;
 
 const GAME_STATES = {
@@ -80,6 +129,32 @@ const opponentInputs = [
 	document.getElementById('cpu3Name'),
 	document.getElementById('cpu4Name'),
 ];
+
+const updateConfigurationButtonState = () => {
+
+	const humanName = humanPlayerNameInput.value.trim().toUpperCase();
+
+	if (humanName === '') {
+		startNewGameButton.disabled = true;
+		return;
+	}
+
+	const opponentNames = opponentInputs
+		.filter(input => !input.disabled)
+		.map(input => input.value.trim())
+		.filter(name => name !== '');
+
+	const hasDuplicateNames = 
+		new Set(opponentNames).size !== opponentNames.length;
+
+	const hasHumanNameConflict =
+		opponentNames.includes(humanName);
+
+	startNewGameButton.disabled = hasDuplicateNames || hasHumanNameConflict;
+
+};
+
+humanPlayerNameInput.addEventListener('input', updateConfigurationButtonState);
 
 const renderGameControls = () => {
 
@@ -266,17 +341,28 @@ const recordMove = (playerIndex, type, card = null) => {
 
 const readGameConfiguration = () => {
 
+	const humanName = humanPlayerNameInput.value.trim().toUpperCase();
+
+	if (humanName === '') {
+		return;
+	}
+
 	const opponentCount = parseInt(
 		document.querySelector("input[name='opponents']:checked").value, 10
 	);
 
+	const opponentNames = opponentInputs
+		.slice(0, opponentCount)
+		.map(input => input.value.trim());
+
 	const configuration = {
 
-		humanName: humanPlayerNameInput.value.trim(),
+		humanName,
 		
-		opponents: opponentInputs
-			.slice(0, opponentCount)
-			.map(input => input.value.trim())
+		opponents: generateOpponentNames(
+			humanName,
+			opponentNames
+		)
 	};
 
 	createPlayers(configuration);
@@ -967,6 +1053,7 @@ document.querySelectorAll(
 	.forEach(input => {
 		input.addEventListener('input', () => {
 			input.value = input.value.toUpperCase();
+			updateConfigurationButtonState();
 		})
 	});
 
