@@ -1,5 +1,8 @@
 const DEFAULT_LANGUAGE = "es";
 
+const DELAY_TIME = 700;
+const MAX_NUMBER_OF_STATUS_RECORDS = 2;
+
 const magicNumber    = 6;
 const lowerValue     = 1;
 const highestValue   = 12;
@@ -660,7 +663,7 @@ const renderNextTurnButton = () => {
 
 	nextTurnContainer.innerHTML = '';
 
-	if (gameOver) {
+	if (gameOver || currentPlayer !== PLAYER) {
 		return;
 	}
 	
@@ -669,7 +672,6 @@ const renderNextTurnButton = () => {
 		const nextTurnButton       = document.createElement('button');
 
 		nextTurnButton.textContent = t("buttons.nextTurn");
-
 		nextTurnButton.id          = 'next-turn';
 		
 		nextTurnButton.classList.add(
@@ -701,7 +703,10 @@ const renderCards = (playerIndex, container, options) => {
 
 		cardImg.classList.add('carta');
 
-		if (options.clickable && !gameOver && allowedCards.includes(card)) {
+		if (options.clickable && 
+				!gameOver && 
+				currentPlayer === PLAYER &&
+				allowedCards.includes(card)) {
 			cardImg.classList.add('playable-card');
 
 			cardImg.addEventListener('click', () => {
@@ -808,22 +813,32 @@ const executeCurrentPlayerTurn = () => {
 
 };
 
+const delay = milliseconds =>
+	new Promise(resolve => setTimeout(resolve, milliseconds));
+
 /*
  * Cambia el turno al siguiente jugador,
  * ejecuta automáticamente el turno de la IA
  * y devuelve el control al jugador humano
  */
-const changeTurn = () => {
+const changeTurn = async () => {
 
 	nextPlayer();
 
 	while (currentPlayer !== PLAYER && !gameOver) {
+
+		await delay(DELAY_TIME);
 
 		executeCurrentPlayerTurn();
 
 		if (!gameOver) {
 			nextPlayer();
 		}
+	}
+
+	if (!gameOver) {
+		refreshGame();
+		showStatus("player", t("status.playerTurn").toUpperCase());
 	}
 
 };
@@ -902,6 +917,8 @@ const playPlayerCard = (card) => {
 	showPlayedCard(PLAYER, card);
 
 	refreshGame();
+
+	nextTurnContainer.innerHTML = '';
 	
 	if (hasPlayerWon(PLAYER)) {
 		finishGame(PLAYER);
@@ -1070,7 +1087,7 @@ const showStatus = (type, message) => {
 		message
 	});
 
-	if (statusHistory.length > players.length) {
+	if (statusHistory.length > MAX_NUMBER_OF_STATUS_RECORDS) {
 		statusHistory.pop();
 	}
 

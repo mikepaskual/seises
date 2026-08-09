@@ -77,6 +77,7 @@ const es = {
         newGame:       "Comienza una nueva partida.",
         playerPass:    "Pasas turno.",
         playerPlays:   "Juegas el {value} de {suit}.",
+        playerTurn:    "¡Es tu turno!",
         playerWins:    "¡Has ganado!",
         title:         "Actividad de la partida"
     },

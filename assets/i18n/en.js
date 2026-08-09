@@ -77,6 +77,7 @@ const en = {
         newGame:       "A new game begins.",
         playerPass:    "You skip your turn.",
         playerPlays:   "You play the {value} of {suit}.",
+        playerTurn:    "It's your turn!",
         playerWins:    "Congratulations! You win!",
         title:         "Game activity"
     },
