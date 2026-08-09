@@ -1,4 +1,7 @@
 const es = {
+    board: {
+        title: "MESA"
+    },
     buttons: {
         configureGame:  "Configurar juego",
         howToPlay:      "Cómo jugar",
@@ -74,7 +77,8 @@ const es = {
         newGame:       "Comienza una nueva partida.",
         playerPass:    "Pasas turno.",
         playerPlays:   "Juegas el {value} de {suit}.",
-        playerWins:    "¡Has ganado!"
+        playerWins:    "¡Has ganado!",
+        title:         "Actividad de la partida"
     },
     suits: {
         bastos:  "Bastos",

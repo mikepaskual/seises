@@ -21,12 +21,49 @@ const STATUS_ICONS = {
 };
 
 const DEFAULT_OPPONENT_NAMES = [
-	'ASDF',
-	'ZXCV',
-	'ZCVV',
-	'QEWE',
-	'HFF',
-	'ADSGFAS'
+	"ZEUS",
+	"ARES",
+	"HADES",
+	"APOLLO",
+	"HERMES",
+	"POSEIDON",
+	"ATHENA",
+	"ARTEMIS",
+	"DIONYSUS",
+	"HEPHAESTUS",
+	"ANUBIS",
+	"RA",
+	"OSIRIS",
+	"HORUS",
+	"SET",
+	"THOTH",
+	"ODIN",
+	"THOR",
+	"LOKI",
+	"TYR",
+	"FREYA",
+	"BALDER",
+	"HEIMDALL",
+	"FENRIR",
+	"VALKYRIE",
+	"MEDUSA",
+	"MINOTAUR",
+	"CERBERUS",
+	"PEGASUS",
+	"HYDRA",
+	"KRATOS",
+	"ORPHEUS",
+	"MERLIN",
+	"EXCALIBUR",
+	"TITAN",
+	"QUETZALCOATL",
+	"INDRA",
+	"SHIVA",
+	"VISHNU",
+	"AMATERASU",
+	"TSUKUYOMI",
+	"SUSANOO",
+	"RAIJIN"
 ];
 
 const getRandomOpponentName = usedNames => {
@@ -478,12 +515,37 @@ const updateOpponentInputs = opponentCount => {
 
 };
 
+const renderPlayerHandInfo = () => {
+
+	playerHandContainer
+		.querySelector('.player-hand-info')
+		?.remove();
+
+	const playerInfo = document.createElement('div');
+	playerInfo.classList.add('player-hand-info');
+
+	const icon = document.createElement('span');
+	icon.classList.add('player-summary-icon');
+	icon.textContent = '🧑';
+
+	const name = document.createElement('span');
+	name.classList.add('player-summary-name');
+	name.textContent = getPlayer(PLAYER).name;
+
+	playerInfo.append(icon, name);
+
+	playerHandContainer.prepend(playerInfo);
+
+};
+
 const renderPlayers = () => {
 
     playersContainer.innerHTML = '';
     playersContainer.classList.add('players-bar');
 
 	const finished = gameState === GAME_STATES.FINISHED;
+
+	renderPlayerHandInfo();
 
 	playerHandContainer.classList.toggle(
 		'd-none',
@@ -1008,7 +1070,7 @@ const showStatus = (type, message) => {
 		message
 	});
 
-	if (statusHistory.length > players.length + 1) {
+	if (statusHistory.length > players.length) {
 		statusHistory.pop();
 	}
 
@@ -1019,6 +1081,12 @@ const showStatus = (type, message) => {
 const renderStatusHistory = () => {
 
 	statusPanel.innerHTML = "";
+
+	const title = document.createElement('div');
+	title.classList.add('status-title');
+	title.textContent = t('status.title').toUpperCase();
+
+	statusPanel.append(title);
 
 	const history = [...statusHistory];
 

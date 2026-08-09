@@ -1,4 +1,7 @@
 const en = {
+    board: {
+        title: "TABLE"
+    },
     buttons: {
         configureGame:  "Configure game",
         howToPlay:      "How play",
@@ -74,7 +77,8 @@ const en = {
         newGame:       "A new game begins.",
         playerPass:    "You skip your turn.",
         playerPlays:   "You play the {value} of {suit}.",
-        playerWins:    "Congratulations! You win!"
+        playerWins:    "Congratulations! You win!",
+        title:         "Game activity"
     },
     suits: {
         bastos:  "Clubs",
