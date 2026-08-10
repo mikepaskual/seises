@@ -6,7 +6,7 @@ const MAX_NUMBER_OF_STATUS_RECORDS = 2;
 const magicNumber    = 6;
 const lowerValue     = 1;
 const highestValue   = 12;
-const excludedValues = [8, 9];
+let excludedValues   = [8, 9];
 const types          = ['B', 'C', 'E', 'O'];
 const SUITS = {
     B: "bastos",
@@ -435,6 +435,16 @@ const createPlayer = (name, type) => ({
 	score: 0
 });
 
+const updateExcludedValues = () => {
+
+	excludedValues = [8, 9];
+
+	if (players.length === 3) {
+		excludedValues.push(2);
+	}
+
+};
+
 const createPlayers = (configuration = null) => {
 
 	if (configuration == null) {
@@ -459,6 +469,8 @@ const createPlayers = (configuration = null) => {
 
 	});
 
+	updateExcludedValues();
+	
 };
 
 const renderPlayerNames = () => {
