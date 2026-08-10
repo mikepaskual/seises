@@ -3,11 +3,12 @@ const DEFAULT_LANGUAGE = "es";
 const DELAY_TIME = 700;
 const MAX_NUMBER_OF_STATUS_RECORDS = 2;
 
-const magicNumber    = 6;
-const lowerValue     = 1;
-const highestValue   = 12;
-let excludedValues   = [8, 9];
-const types          = ['B', 'C', 'E', 'O'];
+const STARTING_CARD   = '6O';
+const magicNumber  = 6;
+const lowerValue   = 1;
+const highestValue = 12;
+let excludedValues = [8, 9];
+const types        = ['B', 'C', 'E', 'O'];
 const SUITS = {
     B: "bastos",
     C: "copas",
@@ -114,7 +115,8 @@ const generateOpponentNames = (humanName, opponentNames) => {
 	});
 };
 
-let gameOver = false;
+let gameOver  = false;
+let firstMove = false;
 
 const GAME_STATES = {
 	NOT_CONFIGURED: "not-configured",
@@ -288,8 +290,7 @@ const resetBoard = () => {
 
 const startGame = () => {
 
-	gameOver      = false;
-	currentPlayer = PLAYER;
+	gameOver = false;
 
 	statusHistory = [];
 	gameHistory   = [];
@@ -300,11 +301,16 @@ const startGame = () => {
 
 	deal(shuffle());
 
+	currentPlayer = findCardOwner(STARTING_CARD);
+	firstMove = true;
+
 	renderPlayers();
 
 	refreshGame();
 
 	showStatus("info", t("status.newGame"));
+
+	startFirstTurn();
 
 };
 
@@ -470,7 +476,7 @@ const createPlayers = (configuration = null) => {
 	});
 
 	updateExcludedValues();
-	
+
 };
 
 const renderPlayerNames = () => {
@@ -557,6 +563,9 @@ const renderPlayerHandInfo = () => {
 	playerHandContainer.prepend(playerInfo);
 
 };
+
+const findCardOwner = card =>
+	players.findIndex(player => player.cards.includes(card));
 
 const renderPlayers = () => {
 
@@ -815,7 +824,20 @@ const removeCard                 = (playerIndex, card) => getPlayerCards(playerI
 const hasPlayerWon               = playerIndex => getPlayerCards(playerIndex).length === 0;
 const cardValue                  = card => parseInt(card.slice(0, -1), 10);
 const getAllowedPlayerCards      = () => getAllowedCards(PLAYER);
-const getAllowedCards            = playerIndex => allowedCards(getPlayerCards(playerIndex), cardsOnTheTable());
+
+const getAllowedCards = playerIndex => { 
+
+	if (firstMove) {
+		return getPlayerCards(playerIndex).includes(STARTING_CARD)
+			? [STARTING_CARD]
+			: [];
+	}
+
+	return allowedCards(
+		getPlayerCards(playerIndex), 
+		cardsOnTheTable())
+};
+
 const nextPlayer                 = () => currentPlayer = (currentPlayer + 1) % players.length;
 const getPlayerCards             = playerIndex => players[playerIndex].cards;
 const getPlayer                  = playerIndex => players[playerIndex];
@@ -884,6 +906,10 @@ const playComputerCard = (playerIndex) => {
 
 	recordMove(playerIndex, "play", cardPlayed);
 
+	if (firstMove) {
+		firstMove = false;
+	}
+
 	refreshGame();
 
 	showPlayedCard(playerIndex, cardPlayed);
@@ -921,6 +947,30 @@ const showPlayedCard = (playerIndex, card) => {
 
 };
 
+const startFirstTurn = async () => {
+
+	if (currentPlayer === PLAYER) {
+		showStatus("player", t("status.playerTurn").toUpperCase());
+		return;
+	}
+
+	while (currentPlayer !== PLAYER && !gameOver) {
+
+		await delay(DELAY_TIME);
+
+		executeCurrentPlayerTurn();
+
+		if (!gameOver) {
+			nextPlayer();
+		}
+	}
+
+	if (!gameOver) {
+		refreshGame();
+		showStatus("player", t("status.playerTurn").toUpperCase());
+	}
+};
+
 const playPlayerCard = (card) => {
 
 	if (gameOver) {
@@ -930,6 +980,10 @@ const playPlayerCard = (card) => {
 	removeCard(PLAYER, card);
 
 	recordMove(PLAYER, "play", card);
+
+	if (firstMove) {
+		firstMove = false;
+	}
 
 	showPlayedCard(PLAYER, card);
 
