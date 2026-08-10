@@ -86,6 +86,11 @@ const getRandomOpponentName = usedNames => {
 	return availableNames[randomIndex];
 };
 
+const getCardValueName = value =>
+    [1, 10, 11, 12].includes(value)
+        ? t(`cards.values.${value}`)
+        : value;
+
 const generateOpponentNames = (humanName, opponentNames) => {
 
 	const usedNames = new Set(
@@ -359,7 +364,7 @@ const renderGameHistory = () => {
 
 const getCardName = (card) => {
 
-	const value = cardValue(card);
+	const value = getCardValueName(cardValue(card));
 	const suit  = SUITS[card.slice(-1)];
 
 	return t("history.play", {
@@ -879,10 +884,10 @@ const playComputerCard = (playerIndex) => {
 
 const showPlayedCard = (playerIndex, card) => {
 
-	const value = card.substring(0, card.length - 1);
+	const value = getCardValueName(cardValue(card));
 
 	const suit = t(
-		`suits.${SUITS[card.substring(card.length - 1)]}`);
+		`suits.${SUITS[card.substring(card.length - 1)]}`).toUpperCase();
 
 	const playerType = playerIndex === PLAYER 
 		? "player"

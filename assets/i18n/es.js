@@ -12,7 +12,13 @@ const es = {
     },
     cards: {
         singular: "carta",
-        plural:   "cartas"
+        plural:   "cartas",
+        values: {
+            1: "AS",
+            10: "SOTA",
+            11: "CABALLO",
+            12: "REY"
+        }
     },
     footer: {
         author: "Desarrollado por",
@@ -72,19 +78,19 @@ const es = {
     },
     status: {
         computerPass:  "{name} pasa turno.",
-        computerPlays: "{name} juega el {value} de {suit}.",
+        computerPlays: "{name} juega {value} de {suit}.",
         computerWins:  "{name} gana.",
         newGame:       "Comienza una nueva partida.",
         playerPass:    "Pasas turno.",
-        playerPlays:   "Juegas el {value} de {suit}.",
+        playerPlays:   "Juegas {value} de {suit}.",
         playerTurn:    "¡Es tu turno!",
         playerWins:    "¡Has ganado!",
         title:         "Actividad de la partida"
     },
     suits: {
-        bastos:  "Bastos",
-        copas:   "Copas",
-        espadas: "Espadas",
-        oros:    "Oros",
+        bastos:  "BASTOS",
+        copas:   "COPAS",
+        espadas: "ESPADAS",
+        oros:    "OROS",
     }
 };

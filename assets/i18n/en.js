@@ -12,7 +12,13 @@ const en = {
     },
     cards: {
         singular: "card",
-        plural:   "cards"
+        plural:   "cards",
+        values: {
+            1: "ACE",
+            10: "JACK",
+            11: "KNIGHT",
+            12: "KING"
+        }
     },
     footer: {
         author: "Developed by",
@@ -72,19 +78,19 @@ const en = {
     },
     status: {
         computerPass:  "{name} skips its turn.",
-        computerPlays: "{name} plays the {value} of {suit}.",
+        computerPlays: "{name} plays {value} of {suit}.",
         computerWins:  "{name} wins.",
         newGame:       "A new game begins.",
         playerPass:    "You skip your turn.",
-        playerPlays:   "You play the {value} of {suit}.",
+        playerPlays:   "You play {value} of {suit}.",
         playerTurn:    "It's your turn!",
         playerWins:    "Congratulations! You win!",
         title:         "Game activity"
     },
     suits: {
-        bastos:  "Clubs",
-        copas:   "Cups",
-        espadas: "Spades",
-        oros:    "Coins",
+        bastos:  "CLUBS",
+        copas:   "CUPS",
+        espadas: "SPADES",
+        oros:    "COINS",
     }
 };
