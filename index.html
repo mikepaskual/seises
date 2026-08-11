@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 	
     <title>Seises</title>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
@@ -27,112 +26,133 @@
 		</div>
 
 		<div class="header-right">
-			<button class="btn btn-outline-light" data-toggle="modal" data-target="#howToPlayModal">
+			<button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#howToPlayModal">
 				📖 <span data-i18n="buttons.howToPlay"></span>
 			</button>
 		</div>
 	</header>
     
     <div class="container">
-        <div class="panel-control">
-			<div class="scoreboard">
-				🏆 <span id="victories-counter">0</span>
-				<span class="score-separator">|</span>
-				💀 <span id="defeats-counter">0</span>
-			</div>
-			<button id="new-game" class="btn btn-primary" data-i18n="buttons.newGame"></button>
-			<div id="next-turn-container"></div>
+
+        <div class="panel-control game-panel">
+
+			<button id="configure-game"
+					class="btn btn-primary"
+					data-bs-toggle="modal"
+					data-bs-target="#newGameModal"
+					data-i18n="buttons.configureGame">
+			</button>
+
+			<button id="start-game" 
+					class="btn btn-success" 
+					data-i18n="buttons.startGame">
+			</button>
+
+			<button id="view-history"
+					class="btn btn-secondary d-none"
+					data-bs-toggle="modal"
+					data-bs-target="#gameHistoryModal"
+					data-i18n="buttons.viewHistory">
+			</button>
+
+			<button id="view-scoreboard"
+					class="btn btn-warning d-none"
+					data-bs-target="#scoreboardModal"
+					data-bs-toggle="modal"
+					data-i18n="buttons.viewScoreboard">
+			</button>
+
         </div>
 
-		<div id="status-panel" class="status-panel info">
-			<span id="status-icon"></span>
-			<span id="status-message"></span>
+    </div>
+
+	<div class="panel-mesa game-panel">
+
+		<div class="panel-title status-title">
+			<span data-i18n="board.title"></span>
 		</div>
-    </div>
 
-    <div class="panel-jugador">
-        <h2>
-			<span class="panel-title">
-				<span class="panel-title-icon">🧑</span>
-				<span data-i18n="headings.player"></span>
-			</span>
+		<div class="mesa-grid">
 
-			<small id="player-cards-counter"></small>
-		</h2>
-        <div id="player-cards-container"></div>
-    </div>
-
-    <div class="panel-jugador">
-        <h2>
-			<span class="panel-title">
-				<span class="panel-title-icon">🤖</span>
-				<span data-i18n="headings.ia"></span> 
-			</span>
-			
-			<small id="computer-cards-counter"></small>
-		</h2>
-        <div id="computer-cards-container"></div>
-    </div>
-
-	<div class="panel-mesa">
-		<h2 class="mesa-titulo">
-			🃏 <span data-i18n="headings.table"></span>
-		</h2>
-
-		<div class="row">
-			<div class="col-md-6">
-				<div class="mesa-palo h-100">
-					<h4 data-i18n="suits.oros"></h4>
-					<div id="oros-cards-container"></div>
-				</div>
+			<div class="mesa-palo mesa-oros">
+				<div id="oros-cards-container"></div>
 			</div>
-			<div class="col-md-6">
-				<div class="mesa-palo h-100">
-					<h4 data-i18n="suits.bastos"></h4>
-					<div id="bastos-cards-container"></div>
-				</div>
+
+			<div class="mesa-palo mesa-bastos">
+				<div id="bastos-cards-container"></div>
 			</div>
-			<div class="col-md-6">
-				<div class="mesa-palo h-100">
-					<h4 data-i18n="suits.copas"></h4>
-					<div id="copas-cards-container"></div>
-				</div>
+
+			<div class="mesa-palo mesa-copas">
+				<div id="copas-cards-container"></div>
 			</div>
-			<div class="col-md-6">
-				<div class="mesa-palo h-100">
-					<h4 data-i18n="suits.espadas"></h4>
-					<div id="espadas-cards-container"></div>
-				</div>
+
+			<div class="mesa-palo mesa-espadas">
+				<div id="espadas-cards-container"></div>
 			</div>
+
 		</div>
+
 	</div>
 
-	<div class="modal fade" id="howToPlayModal" tabindex="-1" role="dialog" aria-labelledby="howToPlayTitle" aria-hidden="true">
-		<div class="modal-dialog modal-lg" role="document">
+	<div id="status-panel" 
+			class="status-panel game-panel info d-none">
+	</div>
+
+    <div id="players-container" 
+			class="game-panel">
+	</div>
+
+	<div id="player-hand-container" class="game-panel">
+
+		<div id="player-cards-container"></div>
+
+		<div id="next-turn-container"></div>
+
+	</div>
+
+	<div class="modal fade" 
+			id="howToPlayModal" 
+			tabindex="-1" 
+			aria-labelledby="howToPlayTitle" 
+			aria-hidden="true">
+
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+
 			<div class="modal-content">
+
 				<div class="modal-header">
+
 					<h5 class="modal-title" id="howToPlayTitle">
-						🃏 <span data-i18n="howToPlay.title"></span>
+						🃏 <span data-i18n="modal.howToPlay.title"></span>
 					</h5>
-					<button type="button" class="close" data-dismiss="modal">
-						<span>&times;</span>
+
+					<button type="button" 
+							class="btn-close" 
+							data-bs-dismiss="modal" 
+							aria-label="Close">
 					</button>
+
 				</div>
 
 				<div class="modal-body">
 					<p>
-						<strong data-i18n="howToPlay.objective.title"></strong>
+						<strong data-i18n="modal.howToPlay.objective.title"></strong>
 					</p>
-					<p data-i18n="howToPlay.objective.description"></p>
+
+					<p data-i18n="modal.howToPlay.objective.description"></p>
+
 					<hr>
+
 					<p>
-						<strong data-i18n="howToPlay.rules.title"></strong>
+						<strong data-i18n="modal.howToPlay.rules.title"></strong>
 					</p>
+
 					<ul>
-						<li data-i18n="howToPlay.rules.items.0"></li>
-						<li data-i18n="howToPlay.rules.items.1"></li>
-						<li data-i18n="howToPlay.rules.items.2"></li>
+						<li data-i18n="modal.howToPlay.rules.items.0"></li>
+						<li data-i18n="modal.howToPlay.rules.items.1"></li>
+						<li data-i18n="modal.howToPlay.rules.items.2"></li>
 					</ul>
+
 					<div class="text-center mb-3">
 						<div class="sequence">
 							<span>1</span>
@@ -147,36 +167,304 @@
 							<span>12</span>
 						</div>
 					</div>
+
 					<ul>
-						<li data-i18n="howToPlay.rules.items.3"></li>
-						<li data-i18n="howToPlay.rules.items.4"></li>
-						<li data-i18n="howToPlay.rules.items.5"></li>
+						<li data-i18n="modal.howToPlay.rules.items.3"></li>
+						<li data-i18n="modal.howToPlay.rules.items.4"></li>
+						<li data-i18n="modal.howToPlay.rules.items.5"></li>
+						<li data-i18n="modal.howToPlay.rules.items.6"></li>
 					</ul>
 				</div>
 
 				<div class="modal-footer">
-					<button class="btn btn-primary" data-dismiss="modal" data-i18n="howToPlay.close"></button>
+					<button class="btn btn-primary" 
+							data-bs-dismiss="modal" 
+							data-i18n="modal.howToPlay.close">
+					</button>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="modal fade" 
+			id="newGameModal" 
+			tabindex="-1" 
+			aria-labelledby="newGameModalLabel" 
+			aria-hidden="true">
+
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+
+			<div class="modal-content">
+
+				<div class="modal-header">
+
+					<h5 class="modal-title" 
+							id="newGameModalLabel" >
+						⚙️ <span data-i18n="modal.configureGame.title"></span>
+					</h5>
+
+					<button type="button" 
+							class="btn-close" 
+							data-bs-dismiss="modal" 
+							aria-label="Close">
+					</button>
+
+				</div>
+
+				<div class="modal-body">
+
+					<div class="mb-4">
+						<label for="humanPlayerName" 
+								class="form-label" 
+								data-i18n="modal.configureGame.humanPlayer">
+						</label>
+
+						<input id="humanPlayerName" 
+								class="form-control" 
+								type="text" 
+								maxlength="12" />
+					</div>
+
+					<div class="mb-4">
+						<div id="numberOfOpponentsLabel"
+								class="form-label d-block"
+								data-i18n="modal.configureGame.numberOfOpponents">
+						</div>
+
+						<div class="btn-group w-100" 
+								role="group"
+								aria-labelledby="numberOfOpponentsLabel">
+							<input type="radio" 
+									class="btn-check" 
+									name="opponents" 
+									id="opponents1" 
+									value="1" 
+									checked>
+							<label class="btn btn-outline-primary" 
+									for="opponents1">
+								1
+							</label>
+
+							<input type="radio" 
+									class="btn-check" 
+									name="opponents" 
+									id="opponents2" 
+									value="2">
+							<label class="btn btn-outline-primary" 
+									for="opponents2">
+								2
+							</label>
+
+							<input type="radio" 
+									class="btn-check" 
+									name="opponents" 
+									id="opponents3" 
+									value="3">
+							<label class="btn btn-outline-primary" 
+									for="opponents3">
+								3
+							</label>
+
+							<input type="radio" 
+									class="btn-check" 
+									name="opponents" 
+									id="opponents4" 
+									value="4">
+							<label class="btn btn-outline-primary" 
+									for="opponents4">
+								4
+							</label>
+						</div>
+					</div>
+
+					<hr/>
+
+					<h6 class="mb-3" 
+							data-i18n="modal.configureGame.opponents">
+					</h6>
+
+					<div class="row g-3">
+
+						<div class="col-12">
+							<label for="cpu1Name" 
+									class="form-label" 
+									data-i18n="modal.configureGame.opponentItem.0">
+							</label>
+
+							<input id="cpu1Name" 
+									class="form-control" 
+									type="text" 
+									maxlength="12" />
+						</div>
+
+						<div class="col-12">
+							<label for="cpu2Name" 
+									class="form-label" 
+									data-i18n="modal.configureGame.opponentItem.1">
+							</label>
+
+							<input id="cpu2Name" 
+									class="form-control" 
+									type="text"
+									maxlength="12" />
+						</div>
+
+						<div class="col-12">
+							<label for="cpu3Name" 
+									class="form-label" 
+									data-i18n="modal.configureGame.opponentItem.2">
+							</label>
+
+							<input id="cpu3Name" 
+									class="form-control" 
+									type="text"
+									maxlength="12" />
+						</div>
+
+						<div class="col-12">
+							<label for="cpu4Name" 
+									class="form-label" 
+									data-i18n="modal.configureGame.opponentItem.3">
+							</label>
+
+							<input id="cpu4Name" 
+									class="form-control" 
+									type="text"
+									maxlength="12" />
+						</div>
+
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" 
+							class="btn btn-secondary" 
+							data-bs-dismiss="modal" 
+							data-i18n="modal.configureGame.cancel">
+					</button>
+
+					<button type="button" 
+							class="btn btn-primary" 
+							id="startNewGameButton" 
+							data-i18n="modal.configureGame.accept"
+							disabled>
+					</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	
-<footer class="footer">
-    <div class="footer-title">
-        🃏 SEISES
-    </div>
-	<div class="footer-version">
-		<span data-i18n="footer.version"></span> 2.0
-	</div>
-    <div class="footer-author">
-		<span data-i18n="footer.author"></span>
-		<a href="https://github.com/mikepaskual" target="_blank" rel="noopener noreferrer">Miguel A. Pascual</a>
-    </div>
-</footer>
 
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<div class="modal fade"
+			id="scoreboardModal"
+			tabindex="-1"
+			aria-labelledby="scoreboardModalLabel"
+			aria-hidden="true">
+
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+
+			<div class="modal-content">
+
+				<div class="modal-header">
+
+					<h5 class="modal-title"
+							id="scoreboardModalLabel">
+						🏆 <span data-i18n="modal.scoreboard.title"></span>
+					</h5>
+
+					<button type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close">
+					</button>
+
+				</div>
+
+				<div class="modal-body">
+
+					<div id="scoreboard-winner"></div>
+
+					<div id="scoreboard-modal-container"></div>
+
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button"
+							class="btn btn-primary"
+							data-bs-dismiss="modal"
+							data-i18n="modal.scoreboard.close">
+					</button>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="modal fade"
+			id="gameHistoryModal"
+			tabindex="-1"
+			aria-labelledby="gameHistoryModalLabel"
+			aria-hidden="true">
+
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+
+			<div class="modal-content">
+
+				<div class="modal-header">
+
+					<h5 class="modal-title"
+							id="gameHistoryModalLabel">
+						📜 <span data-i18n="modal.gameHistory.title"></span>
+					</h5>
+
+					<button type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close">
+					</button>
+
+				</div>
+
+				<div class="modal-body">
+					<div id="game-history-container"></div>
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button"
+							class="btn btn-primary"
+							data-bs-dismiss="modal"
+							data-i18n="modal.gameHistory.close">
+					</button>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+	
+	<footer class="footer">
+		<div class="footer-title">
+			🃏 SEISES 🃏
+		</div>
+		<div class="footer-version">
+			<span data-i18n="footer.version"></span> 3.0
+		</div>
+		<div class="footer-author">
+			<span data-i18n="footer.author"></span>
+			<a href="https://github.com/mikepaskual" target="_blank" rel="noopener noreferrer">Miguel A. Pascual</a>
+		</div>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/underscore-min.js"></script>
     <script src="assets/i18n/es.js"></script>
     <script src="assets/i18n/en.js"></script>

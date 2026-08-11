@@ -1,12 +1,24 @@
 const es = {
+    board: {
+        title: "MESA"
+    },
     buttons: {
-        howToPlay: "Cómo jugar",
-        newGame:   "Nueva partida",
-        nextTurn:  "Paso"
+        configureGame:  "Configurar juego",
+        howToPlay:      "Cómo jugar",
+        nextTurn:       "Paso",
+        startGame:      "Iniciar partida",
+        viewHistory:    "Consultar movimientos",
+        viewScoreboard: "Consultar marcador"
     },
     cards: {
         singular: "carta",
-        plural:   "cartas"
+        plural:   "cartas",
+        values: {
+            1: "AS",
+            10: "SOTA",
+            11: "CABALLO",
+            12: "REY"
+        }
     },
     footer: {
         author: "Desarrollado por",
@@ -17,37 +29,69 @@ const es = {
         player: "Jugador",
         table:  "Mesa de juego"
     },
-    howToPlay: {
-        title: "Cómo jugar",
-        objective: {
-            title:       "Objetivo",
-            description: "Sé el primer jugador en jugar todas tus cartas."
+    history: {
+        pass: "Pasó turno",
+        play: "{value} de {suit}"
+    },
+    modal: {
+        configureGame: {
+            accept:            "Aceptar",
+            cancel:            "Cancelar",
+            humanPlayer:       "Tu nombre",
+            numberOfOpponents: "Número de rivales",
+            opponents:         "Rivales",
+            opponentItem: [
+                "Nombre del rival 1",
+                "Nombre del rival 2",
+                "Nombre del rival 3",
+                "Nombre del rival 4"
+            ],
+            title: "Configuración del juego"
         },
-        rules: {
-            title: "Reglas del juego",
-            items: [
-                "Cualquier <strong>Seis</strong> inicia un palo.",
-                "Solo se puede jugar la carta inmediatamente superior o inferior del mismo palo.",
-                "La baraja española sigue este orden:",
-                "Después del <strong>7</strong>, la siguiente carta es el <strong>10</strong>.",
-                "Si no puedes jugar, se salta tu turno.",
-                "El primer jugador sin cartas restantes gana."
-            ]
+        gameHistory: {
+            close: "Cerrar",
+            title: "Historial de movimientos"
         },
-        close: "¡Entiendo!"
+        howToPlay: {
+            close: "¡Entiendo!",
+            objective: {
+                title:       "Objetivo",
+                description: "Sé el primer jugador en jugar todas tus cartas."
+            },
+            rules: {
+                title: "Reglas del juego",
+                items: [
+                    "El juego comienza con el jugador que tenga el <strong>6 de Oros</strong>.",
+                    "Solo se puede jugar la carta inmediatamente superior o inferior del mismo palo.",
+                    "La baraja española sigue este orden:",
+                    "Después del <strong>7</strong>, la siguiente carta es el <strong>10</strong>.",
+                    "Cuando juegan tres jugadores, no se utiliza el 2 de ningún palo.",
+                    "Si no puedes jugar, se salta tu turno.",
+                    "El primer jugador sin cartas restantes gana."
+                ]
+            },
+            title: "Cómo jugar"
+        },
+        scoreboard: {
+            close: "Cerrar",
+            title: "Marcador"
+        }
     },
     status: {
-        computerPass:  "IA pasa turno.",
-        computerPlays: "IA juega el {value} de {suit}.",
-        computerWins:  "Perdiste. Fin de la partida.",
+        computerPass:  "{name} pasa turno.",
+        computerPlays: "{name} juega {value} de {suit}.",
+        computerWins:  "{name} gana.",
         newGame:       "Comienza una nueva partida.",
-        playerPlays:   "Juegas el {value} de {suit}.",
-        playerWins:    "¡Has ganado!"
+        playerPass:    "Pasas turno.",
+        playerPlays:   "Juegas {value} de {suit}.",
+        playerTurn:    "¡Es tu turno!",
+        playerWins:    "¡Has ganado!",
+        title:         "Actividad de la partida"
     },
     suits: {
-        bastos:  "Bastos",
-        copas:   "Copas",
-        espadas: "Espadas",
-        oros:    "Oros",
+        bastos:  "BASTOS",
+        copas:   "COPAS",
+        espadas: "ESPADAS",
+        oros:    "OROS",
     }
 };
