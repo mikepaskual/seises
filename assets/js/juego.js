@@ -4,7 +4,7 @@ const DELAY_TIME = 700;
 const MAX_NUMBER_OF_STATUS_RECORDS = 2;
 
 const STARTING_CARD   = '6O';
-const magicNumber  = 6;
+const STARTING_VALUE  = 6;
 const lowerValue   = 1;
 const highestValue = 12;
 let excludedValues = [8, 9];
@@ -94,12 +94,12 @@ const getCardValueName = value =>
 
 const generateOpponentNames = (humanName, opponentNames) => {
 
-	const usedNames = new Set(
+	const usedNames = new Set([
 		humanName.toUpperCase(),
 		...opponentNames
 			.filter(name => name !== "")
 			.map(name => name.toUpperCase())
-	);
+	]);
 
 	return opponentNames.map(name => {
 
@@ -143,7 +143,6 @@ let statusHistory = [];
 let gameHistory   = [];
 
 const playerCards   = () => players[PLAYER].cards;
-const computerCards = () => players[COMPUTER].cards;
 
 const orosCardsContainer    = document.querySelector('#oros-cards-container');
 const copasCardsContainer   = document.querySelector('#copas-cards-container');
@@ -227,11 +226,31 @@ const renderGameControls = () => {
 		viewHistoryButton.classList.remove('d-none');
 	}
 
-	if (gameState == GAME_STATES.CONFIGURED || 
-			gameState == GAME_STATES.PLAYING || 
-			gameState == GAME_STATES.FINISHED) {
+	if (gameState === GAME_STATES.CONFIGURED || 
+			gameState === GAME_STATES.PLAYING || 
+			gameState === GAME_STATES.FINISHED) {
 		viewScoreboardButton.classList.remove('d-none');
 	}
+
+};
+
+const refreshLanguageDependentContent = () => {
+
+    renderTexts();
+
+    if (statusHistory.length > 0) {
+        renderStatusHistory();
+    }
+
+    if (gameHistory.length > 0) {
+        renderGameHistory();
+    }
+
+    if (players.length > 0) {
+        renderScoreboard();
+    }
+
+    renderNextTurnButton();
 
 };
 
@@ -269,15 +288,6 @@ const resetBoard = () => {
 	statusPanel.innerHTML = '';
 
 	playerHandContainer.classList.remove('d-none');
-	
-	players.forEach((player, index) => {
-
-		const cardsContainer = document.getElementById(`player-${index}-cards-container`);
-
-		if (cardsContainer) {
-			cardsContainer.innerHTML = '';
-		}
-	});
 	
 	orosCardsContainer.innerHTML    = '';
 	copasCardsContainer.innerHTML   = '';
@@ -476,16 +486,6 @@ const createPlayers = (configuration = null) => {
 	});
 
 	updateExcludedValues();
-
-};
-
-const renderPlayerNames = () => {
-
-	document.getElementById("player-name").textContent = 
-		getPlayer(PLAYER).name;
-
-	document.getElementById("computer-name").textContent =
-		getPlayer(COMPUTER).name;
 
 };
 
@@ -818,7 +818,6 @@ const nextTurnPressed = () => {
 
 };
 
-const pluralize                  = (count, singularKey, pluralKey) => `${count} ${t(count === 1 ? singularKey : pluralKey)}`;
 const randomInt                  = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const removeCard                 = (playerIndex, card) => getPlayerCards(playerIndex).splice(getPlayerCards(playerIndex).indexOf(card), 1)[0];
 const hasPlayerWon               = playerIndex => getPlayerCards(playerIndex).length === 0;
@@ -1117,7 +1116,7 @@ const renderTexts = () => {
 };
 
 const allowedCards = (cards, cardsOnTheTable) => {
-	const allowedCards = cards.filter(card => card.startsWith(String(magicNumber)));
+	const allowedCards = cards.filter(card => card.startsWith(String(STARTING_VALUE)));
 	
 	for(const type of types) {
 		const cardsOfType = cardsOnTheTable.filter(card => card.endsWith(type));
@@ -1214,19 +1213,24 @@ document.querySelectorAll(
 	});
 
 languageSelector.addEventListener("change", event => {
+
 	const language = event.target.value;
+
 	setLanguage(language);
 	localStorage.setItem("language", language);
-	renderTexts();
+
+	refreshLanguageDependentContent();
+	
 });
 
 opponentRadios.forEach(radio => {
 
 	radio.addEventListener("change", () => {
 
-		updateOpponentInputs(
-			parseInt(radio.value, 10)
-		);
+		const opponentCount = parseInt(radio.value, 10);
+
+		updateOpponentInputs(opponentCount);
+		updateConfigurationButtonState();
 
 	});
 

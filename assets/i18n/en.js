@@ -4,7 +4,7 @@ const en = {
     },
     buttons: {
         configureGame:  "Configure game",
-        howToPlay:      "How play",
+        howToPlay:      "How to play",
         nextTurn:       "Pass",
         startGame:      "Start game",
         viewHistory:    "View history",
@@ -46,7 +46,7 @@ const en = {
                 "Name of opponent 3",
                 "Name of opponent 4"
             ],
-            title: "Configuration game"
+            title: "Game configuration"
         },
         gameHistory: {
             close: "Close",
@@ -72,7 +72,7 @@ const en = {
             title: "How play"
         },
         scoreboard: {
-            close: "Cerrar",
+            close: "Close",
             title: "Score"
         }
     },
