@@ -61,10 +61,11 @@ const es = {
             rules: {
                 title: "Reglas del juego",
                 items: [
-                    "Cualquier <strong>Seis</strong> inicia un palo.",
+                    "El juego comienza con el jugador que tenga el <strong>6 de Oros</strong>.",
                     "Solo se puede jugar la carta inmediatamente superior o inferior del mismo palo.",
                     "La baraja española sigue este orden:",
                     "Después del <strong>7</strong>, la siguiente carta es el <strong>10</strong>.",
+                    "Cuando juegan tres jugadores, no se utiliza el 2 de ningún palo.",
                     "Si no puedes jugar, se salta tu turno.",
                     "El primer jugador sin cartas restantes gana."
                 ]

@@ -61,10 +61,11 @@ const en = {
             rules: {
                 title: "Rules",
                 items: [
-                    "Any <strong>Six</strong> starts a suit.",
+                    "The game starts with the <strong>6 of Coins</strong>.",
                     "You can only play the card immediately above or below it in the same suit.",
                     "The Spanish deck follows this order:",
                     "After the <strong>7</strong>, the next card is the <strong>10</strong>.",
+                    "When playing with three players, the 2 of each suit is not used.",
                     "If you can't play, your turn is skipped.",
                     "The first player with no cards remaining wins."
                 ]
