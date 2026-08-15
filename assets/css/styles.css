@@ -72,30 +72,6 @@ html, body {
     font-size: 1.4rem;
 }
 
-.status-entry {
-	display: flex;
-	align-items: center;
-	gap: .75rem;
-
-	padding: .6rem .25rem;
-
-	border-bottom: 1px solid rgba(255, 255, 255, .08);
-}
-
-.status-entry:last-child {
-	border-bottom: none;
-}
-
-.status-entry-icon {
-	width: 1.5rem;
-	text-align: center;
-	flex-shrink: 0;
-}
-
-.status-entry-text {
-	flex: 1;
-}
-
 .panel-mesa {
     min-height: 240px;
 
@@ -138,8 +114,7 @@ html, body {
     font-weight:600;
 }
 
-#player-cards-container,
-#computer-cards-container{
+#player-cards-container{
     min-height:150px;
     display:flex;
     align-items:center;
@@ -273,11 +248,13 @@ html, body {
 }
 
 .playable-card {
-    cursor:pointer;
+    cursor: pointer;
+
+    transform: translateY(-4px);
 
     box-shadow:
-        0 4px 10px rgba(0,0,0,.35),
-        0 0 6px rgba(255,255,255,.25);
+        0 6px 14px rgba(0,0,0,.40),
+        0 0 8px rgba(255,255,255,.30);
 }
 
 .playable-card:hover {
@@ -295,11 +272,11 @@ html, body {
 
 .status-panel {
 	display: flex;
-	flex-direction: column;
-	align-items: stretch;
+	align-items: center;
+	justify-content: center;
 
 	margin: 20px auto 25px;
-	padding: 16px 20px;
+	padding: 18px 20px;
 
 	background: rgba(255, 255, 255, .06);
 	border: 1px solid rgba(255, 255, 255, .15);
@@ -314,7 +291,13 @@ html, body {
 	transition: all .2s ease;
 }
 
-.status-title {
+.status-message {
+	text-align: center;
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+.board-title {
 	display: flex;
 	align-items: center;
 	gap: .5rem;
@@ -437,6 +420,26 @@ html, body {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
+}
+
+.player-summary.active-player {
+    border-color: rgba(255, 193, 7, .8);
+
+    box-shadow:
+        0 0 0 1px rgba(255, 193, 7, .35),
+        0 0 14px rgba(255, 193, 7, .25);
+
+    background: rgba(255, 193, 7, .08);
+}
+
+#player-hand-container.active-player-hand {
+    border-color: rgba(255, 193, 7, .8);
+
+    box-shadow:
+        0 0 0 1px rgba(255, 193, 7, .35),
+        0 0 14px rgba(255, 193, 7, .25);
+
+    background: rgba(255, 193, 7, .08);
 }
 
 .player-info {

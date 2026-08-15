@@ -36,7 +36,7 @@ Made with ❤️ and a lot of love.
 - Clickable cards with visual indication of playable cards
 - Interactive game board
 - Dynamic player panels
-- Dynamic activity and status panel
+- Dynamic game status panel
 - Game configuration modal
 - Scoreboard with victory tracking
 - Game history for the current match
@@ -48,7 +48,7 @@ Made with ❤️ and a lot of love.
 
 ## 📸 Screenshots
 
-The following screenshots showcase the main features and interface components of **Seises 3.0**.
+The following screenshots showcase the main features and interface components of **Seises 3.1**.
 
 ### Game Board
 
@@ -61,10 +61,6 @@ The following screenshots showcase the main features and interface components of
 ### Playable Cards
 
 ![Clickable Cards](assets/images/screenshots/clickable-cards.png)
-
-### Activity Panel
-
-![Status Panel](assets/images/screenshots/status-panel.png)
 
 ### Scoreboard
 
@@ -113,21 +109,21 @@ Before starting a game, the player can:
 If the table contains:
 
 ```text
-5 Oros 
-6 Oros 
-7 Oros
+5 Coins 
+6 Coins 
+7 Coins
 ```
 
 the next valid card is:
 
 ```text
-10 Oros
+10 Coins
 ```
 
 and:
 
 ```text
-4 Oros
+4 Coins
 ```
 
 can also be played.
@@ -230,6 +226,13 @@ The game runs entirely in the browser and requires no server-side components.
 - English / Spanish internationalization
 - Persistent language selection
 - Bootstrap 5 interface
+
+### ✅ Version 3.1
+
+- Improved visual indication of the active player and playable cards
+- Improved end-of-game experience
+- Improved game status and turn feedback
+- Improved scoreboard presentation
 
 ---
 

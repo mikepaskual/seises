@@ -80,13 +80,13 @@ const en = {
     status: {
         computerPass:  "{name} skips its turn.",
         computerPlays: "{name} plays {value} of {suit}.",
+        computerTurn:  "{name} is playing...",
         computerWins:  "{name} wins.",
         newGame:       "A new game begins.",
-        playerPass:    "You skip your turn.",
-        playerPlays:   "You play {value} of {suit}.",
+        playerPass:    "{name} skips its turn.",
+        playerPlays:   "{name} plays {value} of {suit}.",
         playerTurn:    "It's your turn!",
-        playerWins:    "Congratulations! You win!",
-        title:         "Game activity"
+        playerWins:    "Congratulations! You win!"
     },
     suits: {
         bastos:  "CLUBS",
