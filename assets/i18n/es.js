@@ -80,13 +80,13 @@ const es = {
     status: {
         computerPass:  "{name} pasa turno.",
         computerPlays: "{name} juega {value} de {suit}.",
+        computerTurn:  "{name} está jugando...",
         computerWins:  "{name} gana.",
         newGame:       "Comienza una nueva partida.",
-        playerPass:    "Pasas turno.",
-        playerPlays:   "Juegas {value} de {suit}.",
+        playerPass:    "{name} pasa turno.",
+        playerPlays:   "{name} juega {value} de {suit}.",
         playerTurn:    "¡Es tu turno!",
-        playerWins:    "¡Has ganado!",
-        title:         "Actividad de la partida"
+        playerWins:    "¡Has ganado!"
     },
     suits: {
         bastos:  "BASTOS",

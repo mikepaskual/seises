@@ -1,7 +1,8 @@
 const DEFAULT_LANGUAGE = "es";
 
 const DELAY_TIME = 700;
-const MAX_NUMBER_OF_STATUS_RECORDS = 2;
+
+let playerTurnInProgress = false;
 
 const STARTING_CARD   = '6O';
 const STARTING_VALUE  = 6;
@@ -14,14 +15,6 @@ const SUITS = {
     C: "copas",
     E: "espadas",
     O: "oros"
-};
-const STATUS_ICONS = {
-    info:     "ℹ️",
-    player:   "🧑",
-    computer: "🤖",
-    warning:  "⚠️",
-    success:  "🎉",
-    error:    "💀"
 };
 
 const DEFAULT_OPPONENT_NAMES = [
@@ -139,7 +132,6 @@ let players = [];
 
 let currentPlayer = PLAYER;
 
-let statusHistory = [];
 let gameHistory   = [];
 
 const playerCards   = () => players[PLAYER].cards;
@@ -204,6 +196,8 @@ humanPlayerNameInput.addEventListener('input', updateConfigurationButtonState);
 
 const renderGameControls = () => {
 
+	const finished = gameState === GAME_STATES.FINISHED;
+
 	viewHistoryButton.classList.add('d-none');
 	viewScoreboardButton.classList.add('d-none');
 
@@ -211,24 +205,23 @@ const renderGameControls = () => {
 	startGameButton.classList.add('d-none');
 
 	if (gameState === GAME_STATES.NOT_CONFIGURED || 
-			gameState === GAME_STATES.CONFIGURED || 
-			gameState === GAME_STATES.FINISHED) {
+			gameState === GAME_STATES.CONFIGURED ||
+			finished) {
 		configureGameButton.classList.remove('d-none');
 	}
 
 	if (gameState === GAME_STATES.CONFIGURED || 
-			gameState === GAME_STATES.PLAYING || 
-			gameState === GAME_STATES.FINISHED) {
+			finished) {
 		startGameButton.classList.remove('d-none');
 	}
 
-	if (gameState === GAME_STATES.FINISHED) {
+	if (finished) {
 		viewHistoryButton.classList.remove('d-none');
 	}
 
 	if (gameState === GAME_STATES.CONFIGURED || 
 			gameState === GAME_STATES.PLAYING || 
-			gameState === GAME_STATES.FINISHED) {
+			finished) {
 		viewScoreboardButton.classList.remove('d-none');
 	}
 
@@ -237,10 +230,6 @@ const renderGameControls = () => {
 const refreshLanguageDependentContent = () => {
 
     renderTexts();
-
-    if (statusHistory.length > 0) {
-        renderStatusHistory();
-    }
 
     if (gameHistory.length > 0) {
         renderGameHistory();
@@ -281,6 +270,10 @@ const newGameModal = new bootstrap.Modal(
     document.getElementById("newGameModal")
 );
 
+newGameModal._element.addEventListener('shown.bs.modal', () => {
+	humanPlayerNameInput.focus();
+});
+
 const languageSelector = document.querySelector("#language-selector");
 
 const resetBoard = () => {
@@ -288,6 +281,8 @@ const resetBoard = () => {
 	statusPanel.innerHTML = '';
 
 	playerHandContainer.classList.remove('d-none');
+
+	playerCardsContainer.innerHTML = '';
 	
 	orosCardsContainer.innerHTML    = '';
 	copasCardsContainer.innerHTML   = '';
@@ -302,7 +297,6 @@ const startGame = () => {
 
 	gameOver = false;
 
-	statusHistory = [];
 	gameHistory   = [];
 
 	players.forEach(player => {
@@ -428,8 +422,8 @@ const readGameConfiguration = () => {
 
 	createPlayers(configuration);
 
-	statusHistory = [];
-	statusPanel.innerHTML = '';
+	resetBoard();
+
 	statusPanel.classList.add('d-none');
 
 	gameState = GAME_STATES.CONFIGURED;
@@ -581,6 +575,13 @@ const renderPlayers = () => {
 		finished && playerCards().length === 0
 	);
 
+	playerHandContainer.classList.toggle(
+		'active-player-hand',
+		gameState === GAME_STATES.PLAYING &&
+			currentPlayer === PLAYER &&
+			!gameOver
+	);
+
     players.forEach((player, index) => {
 
 		if (finished && (index === PLAYER || player.cards.length === 0)) {
@@ -589,6 +590,10 @@ const renderPlayers = () => {
 
         const playerPanel = document.createElement('div');
         playerPanel.classList.add('player-summary');
+
+		if (gameState === GAME_STATES.PLAYING && index === currentPlayer) {
+			playerPanel.classList.add('active-player');
+		}
 
         const playerInfo = document.createElement('div');
         playerInfo.classList.add('player-info');
@@ -731,6 +736,7 @@ const renderCards = (playerIndex, container, options) => {
 
 		if (options.clickable && 
 				!gameOver && 
+				!playerTurnInProgress &&
 				currentPlayer === PLAYER &&
 				allowedCards.includes(card)) {
 			cardImg.classList.add('playable-card');
@@ -808,13 +814,30 @@ const orderCards = (cardsToOrder) => {
 	});
 };
 
-const nextTurnPressed = () => {
+const nextTurnPressed = async () => {
+
+	if (gameOver || playerTurnInProgress) {
+		return;
+	}
+
+	playerTurnInProgress = true;
 
 	recordMove(PLAYER, "pass");
 
-	showStatus("warning", t("status.playerPass"));
+	showStatus(
+		"warning", 
+		t("status.playerPass", {
+			name: getPlayer(PLAYER).name
+		})
+	);
 
-	changeTurn();
+	nextTurnContainer.innerHTML = '';
+
+	await delay(DELAY_TIME);
+
+	playerTurnInProgress = false;
+
+	await changeTurn();
 
 };
 
@@ -837,17 +860,17 @@ const getAllowedCards = playerIndex => {
 		cardsOnTheTable())
 };
 
-const nextPlayer                 = () => currentPlayer = (currentPlayer + 1) % players.length;
-const getPlayerCards             = playerIndex => players[playerIndex].cards;
-const getPlayer                  = playerIndex => players[playerIndex];
+const nextPlayer = () => currentPlayer = (currentPlayer + 1) % players.length;
+const getPlayerCards = playerIndex => players[playerIndex].cards;
+const getPlayer = playerIndex => players[playerIndex];
 
-const executeCurrentPlayerTurn = () => {
+const executeCurrentPlayerTurn = async () => {
 
 	if (gameOver || currentPlayer === PLAYER) {
 		return;
 	}
 
-	playComputerCard(currentPlayer);
+	await playComputerCard(currentPlayer);
 
 };
 
@@ -865,9 +888,18 @@ const changeTurn = async () => {
 
 	while (currentPlayer !== PLAYER && !gameOver) {
 
+		refreshGame();
+
+		showStatus(
+			'computer',
+			t('status.computerTurn', {
+				name: getPlayer(currentPlayer).name
+			})
+		);
+
 		await delay(DELAY_TIME);
 
-		executeCurrentPlayerTurn();
+		await executeCurrentPlayerTurn();
 
 		if (!gameOver) {
 			nextPlayer();
@@ -876,12 +908,15 @@ const changeTurn = async () => {
 
 	if (!gameOver) {
 		refreshGame();
-		showStatus("player", t("status.playerTurn").toUpperCase());
+		showStatus(
+			"player", 
+			t("status.playerTurn").toUpperCase()
+		);
 	}
 
 };
 
-const playComputerCard = (playerIndex) => {
+const playComputerCard = async (playerIndex) => {
 	
 	const allowedComputerCards = getAllowedCards(playerIndex);
 
@@ -892,6 +927,8 @@ const playComputerCard = (playerIndex) => {
 		showStatus("warning", t("status.computerPass", {
 			name: getPlayer(playerIndex).name
 		}));
+
+		await delay(DELAY_TIME);
 
 		return;
 	}
@@ -913,6 +950,8 @@ const playComputerCard = (playerIndex) => {
 
 	showPlayedCard(playerIndex, cardPlayed);
 
+	await delay(DELAY_TIME);
+
 	if (hasPlayerWon(playerIndex)) {
 		finishGame(playerIndex);
 	}
@@ -932,12 +971,9 @@ const showPlayedCard = (playerIndex, card) => {
 
 	const params = {
 		value,
-		suit
+		suit,
+		name: getPlayer(playerIndex).name
 	};
-
-	if (playerIndex !== PLAYER) {
-		params.name = getPlayer(playerIndex).name;
-	}
 
 	showStatus(
 		playerType,
@@ -949,15 +985,31 @@ const showPlayedCard = (playerIndex, card) => {
 const startFirstTurn = async () => {
 
 	if (currentPlayer === PLAYER) {
-		showStatus("player", t("status.playerTurn").toUpperCase());
+
+		refreshGame();
+
+		showStatus(
+			"player", 
+			t("status.playerTurn").toUpperCase()
+		);
+
 		return;
 	}
 
 	while (currentPlayer !== PLAYER && !gameOver) {
 
+		refreshGame();
+
+		showStatus(
+			'computer', 
+			t('status.computerTurn', {
+				name: getPlayer(currentPlayer).name
+			})
+		);
+
 		await delay(DELAY_TIME);
 
-		executeCurrentPlayerTurn();
+		await executeCurrentPlayerTurn();
 
 		if (!gameOver) {
 			nextPlayer();
@@ -966,15 +1018,20 @@ const startFirstTurn = async () => {
 
 	if (!gameOver) {
 		refreshGame();
-		showStatus("player", t("status.playerTurn").toUpperCase());
+		showStatus(
+			"player", 
+			t("status.playerTurn").toUpperCase()
+		);
 	}
 };
 
-const playPlayerCard = (card) => {
+const playPlayerCard = async (card) => {
 
-	if (gameOver) {
+	if (gameOver || playerTurnInProgress) {
 		return;
 	}
+
+	playerTurnInProgress = true;
 	
 	removeCard(PLAYER, card);
 
@@ -984,17 +1041,27 @@ const playPlayerCard = (card) => {
 		firstMove = false;
 	}
 
-	showPlayedCard(PLAYER, card);
-
 	refreshGame();
+
+	showPlayedCard(PLAYER, card);
 
 	nextTurnContainer.innerHTML = '';
 	
 	if (hasPlayerWon(PLAYER)) {
+
 		finishGame(PLAYER);
-	} else {
-		changeTurn();
+
+		playerTurnInProgress = false;
+
+		return;
+
 	}
+
+	await delay(DELAY_TIME);
+
+	playerTurnInProgress = false;
+
+	changeTurn();
 
 };
 
@@ -1017,20 +1084,23 @@ const finishGame = (winner) => {
 	scoreboardModal.show();
 
 	if (winner === PLAYER) {
-		showStatus("success", t("status.playerWins"));
+		showStatus(
+			"success", 
+			t("status.playerWins")
+		);
 	} else {
-		showStatus("success", t("status.computerWins", {
-			name: getPlayer(winner).name
-		}));
+		showStatus(
+			"success", 
+			t("status.computerWins", {
+				name: getPlayer(winner).name
+			})
+		);
 	}
 
 	refreshGame();
 
 	renderGameControls();
 
-	statusPanel.classList.add('d-none');
-
-	renderPlayers();
 };
 
 const cardsOnTheTable = () => {
@@ -1077,15 +1147,20 @@ const previousCardValue = value => {
 
 const refreshGame = () => {
 
+	renderPlayers();
+
 	players.forEach((player, index) => {
 
 		const cardsCounter =
 			document.getElementById(`player-${index}-cards-counter`);
 
-		renderCardsCounter(
-			index,
-			cardsCounter
-		);
+		if (cardsCounter) {
+			renderCardsCounter(
+				index,
+				cardsCounter
+			);
+		}
+		
 	});
 
 	playerCardsContainer.innerHTML = '';
@@ -1150,57 +1225,14 @@ const allowedCards = (cards, cardsOnTheTable) => {
 
 const showStatus = (type, message) => {
 
-	statusPanel.classList.remove('d-none');
+	const statusPanel = document.getElementById('status-panel');
 
-	statusHistory.unshift({
-		type,
-		message
-	});
+	statusPanel.classList.remove('success', 'info', 'warning', 'danger', 'd-none');
 
-	if (statusHistory.length > MAX_NUMBER_OF_STATUS_RECORDS) {
-		statusHistory.pop();
-	}
+	statusPanel.classList.add(type);
 
-    renderStatusHistory();
+	statusPanel.innerHTML = `<span class="status-message">${message}</span>`;
 
-};
-
-const renderStatusHistory = () => {
-
-	statusPanel.innerHTML = "";
-
-	const title = document.createElement('div');
-	title.classList.add('status-title');
-	title.textContent = t('status.title').toUpperCase();
-
-	statusPanel.append(title);
-
-	const history = [...statusHistory];
-
-	history.forEach((status, index) => {
-
-		const entry = document.createElement("div");
-
-		entry.classList.add("status-entry");
-
-		if (index === 0) {
-			entry.classList.add("current");
-		}
-
-		const icon = document.createElement("span");
-		icon.classList.add("status-entry-icon");
-		icon.textContent = STATUS_ICONS[status.type];
-
-		const text = document.createElement("span");
-		text.classList.add("status-entry-text");
-		text.textContent = status.message;
-
-		entry.append(icon, text);
-
-		statusPanel.append(entry);
-
-	});
-	
 };
 
 document.querySelectorAll(
